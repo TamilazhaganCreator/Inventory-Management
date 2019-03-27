@@ -1,0 +1,61 @@
+<div *ngIf="lovModalOpen" class="item-codes-modal"
+  [ngClass]="{'lov-width-incr': (lovDetailsObject.lov_header.length === 3)}">
+  <div class="row no-margin-bottom modal-header valign-wrapper">
+    <div class="col s8">
+      <h5 class="lovModalHeader" style="font-size: 1.5rem !important;">{{lovDetailsObject.header}}</h5>
+    </div>
+    <div class="col s4 nopad">
+      <i class="material-icons modal-close-button " (click)="closeLovModal()">close</i>
+    </div>
+  </div>
+  <div class="row no-margin-bottom pad-both-search">
+    <div class="input-field col s12 nopad">
+      <i class="material-icons prefix" style="padding-left: .3em;padding-top: .3em;">search</i>
+      <input autocomplete="off" #lovSearchTag id="item_icon_prefix" tabindex="1" type="text" (input)="filterLovDatas()"
+        (keydown)="itemModalKeyActions($event)" class="validate no-margin-bottom" min="0" [(ngModel)]="searchWord">
+      <label for="item_icon_prefix">Search</label>
+    </div>
+  </div>
+  <div class="lov-pad-both">
+    <div class="row header no-margin-bottom">
+      <div class="col s12 nopad unselectable">
+        <div class="col" *ngFor="let header of lovDetailsObject.lov_header;let _index = index"
+          [style.width.%]="lovDetailsObject.header_width[_index]">
+          {{header}}
+        </div>
+      </div>
+    </div>
+    <div *ngIf="loaderShow" class="row scrollbar search-result-body no-margin-bottom"
+      style="padding-left:40%;padding-top:10%;">
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer loader-bg">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div #itemsModal class="row scrollbar search-result-body no-margin-bottom"
+      *ngIf="!loaderShow && allItems.length > 0">
+      <div #lovTableRow class="row" *ngFor="let item of allItems;let _index = index"
+        class="table-row row no-margin-bottom" style="cursor:pointer"
+        [ngClass]="{'table-row-selected': tableRowSelected[_index]}" (click)="setSelectedData(item)">
+        <div class="col" *ngFor="let field of lovDetailsObject.table_content;let _index = index"
+          [style.width.%]="lovDetailsObject.table_content_width[_index]">
+          {{item[field]}}
+        </div>
+      </div>
+    </div>
+    <div #itemsModal class="row scrollbar search-result-body no-margin-bottom"
+      *ngIf="!loaderShow && allItems.length == 0">
+      <div style="font-size:1.25rem;margin-top: 1.5rem;" class="center-align">There is no {{lovType.toLowerCase()}}
+        available</div>
+    </div>
+  </div>
+</div>

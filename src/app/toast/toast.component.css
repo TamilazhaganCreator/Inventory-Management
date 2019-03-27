@@ -1,0 +1,35 @@
+.closeicon {
+    font-size: 2vw;
+    cursor: pointer;
+    float: right;
+    color: #fdfefd
+}
+
+
+.snackbar-success,
+.snackbar-error,
+.snackbar-success,
+.snackbar-warning {
+  visibility: visible;
+  max-width: 33% !important;
+  min-width: 33% !important;
+  margin-left: -125px;
+  background-color: #323232;
+  color: #fdfefd;
+  border-radius: 2px;
+  padding: 12px;
+  position: fixed;
+  z-index: 100000;
+  font-size: 1vw;
+  left: 45%;
+  bottom: 0;
+  font-size: 11pt;
+}
+
+.snackbar-error {
+  background-color: #ff0000;
+}
+
+.snackbar-warning {
+  color: #ffd700;
+}

@@ -1,0 +1,130 @@
+.modal-header {
+    padding-bottom: 0px;
+    background: teal;
+    color: white;
+    border-bottom: 1px solid #d0d0d0;
+    padding-left: .4em;
+    padding-right: .4em;
+}
+
+.modal-close-button {
+    float: right;
+    cursor: pointer;
+    margin-right: 4%;
+}
+
+.header {
+    padding-top: .75em;
+    padding-bottom: .75em;
+    background-color: #37474F;
+    color: white;
+}
+
+.background-grey {
+    font-size: 10.5pt;
+    font-weight: 500;
+    background-color: #37474F;
+    color: white;
+}
+
+.input-field.col label {
+    left: 0
+}
+
+.footer {
+    padding-top: 15px;
+    border-top: solid 1px #ccc;
+    margin-bottom: 15px
+}
+
+.search-result-body {
+    overflow-y: auto !important;
+}
+
+.search-result-body {
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 10.5pt;
+}
+
+.table-row {
+    padding: 10px 10px;
+    cursor: pointer
+}
+
+.scrollbar {
+    overflow-y: auto;
+    height: 40vh;
+}
+
+.remove-margin {
+    margin-top: 0;
+    height: 14px;
+    margin-bottom: 0;
+}
+
+.pad-left-45 {
+    padding-left: .45em
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.lov-width-incr {
+    width: 36%;
+}
+
+.pad-right-1 {
+    padding-right: 1em;
+}
+
+.pad-left-0 {
+    padding-left: 0
+}
+
+.pad-right-1em {
+    text-align: right;
+    padding-right: 1em;
+}
+
+.bold-text{
+    font-weight: 500;
+}
+
+.margint-both-15{
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.lov-content{
+    margin-top: 1%;
+    text-transform: uppercase;
+}
+
+.pad-both-search {
+    background-color: #F1F6F5;
+    padding-bottom: 4%;
+    padding-right: .6em;
+  }
+  
+  .loader-bg{
+    border-color: teal
+  }
+
+  .item-codes-modal {
+    bottom: 0;
+    right: .2%;
+    width: 35%;
+    position: absolute;
+    z-index: 1000;
+    background-color: #fafafa;
+    overflow-y: hidden;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+  } 
+  
+  .table-row-selected {
+    background-color: #d9f0f5;
+  }
+  

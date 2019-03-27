@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="card row margin-top-2">
+    <h5 class="center-align card-title">
+      ITEM MASTER
+    </h5>
+    <div class="input-field col s6">
+      <input #nameInput id="item_name" tabindex="1" [(ngModel)]="currentItem.name" type="text">
+      <label for="item_name" [ngClass]="{'actives': (currentItem.name != null  )}">Name</label>
+    </div>
+    <div class=" col s6 nopad">
+      <div class="input-field col s6">
+        <input id="cost" type="text" tabindex="2" [value]="currentItem.cost ? currentItem.cost : ''"
+          (input)="checkTwoDecimalPlaces($event,'cost')" (blur)="checkSp()">
+        <label for="cost" [ngClass]="{'actives': (currentItem.cost != null)}">Cost</label>
+      </div>
+      <div class="input-field col s6">
+        <input #spInput id="sp" tabindex="3" type="text" [value]="currentItem.sp ? currentItem.sp : ''"
+          (input)="checkTwoDecimalPlaces($event,'sp')" (blur)="checkSp()">
+        <label for="sp" [ngClass]="{'actives': (currentItem.sp != null)}">Selling Price</label>
+      </div>
+    </div>
+    <div class="input-field col s6 ">
+      <input id="hsncode" tabindex="4" type="text" maxlength="6" [(ngModel)]="currentItem.hsncode">
+      <label for="hsncode" [ngClass]="{'actives': (currentItem.hsncode != null)}">HSN Code</label>
+    </div>
+    <div class="input-field col s6 ">
+      <input #spInput id="unitName" tabindex="5" type="text" [value]="currentItem.unitName ? currentItem.unitName : ''"
+        (keydown.enter)="showLovModal($event,'unit')" (input)="removeTypedValue($event,'unit')">
+      <label for="unitName" [ngClass]="{'actives': (currentItem.unitName != null)}">Unit</label>
+    </div>
+    <div class="input-field col s6">
+      <input #taxInput id="tax" type="text" [value]="currentItem.taxPercentage" tabindex="6" (keydown.enter)="showTax()"
+        (input)="removeTypedValue($event,'tax')">
+      <label for="tax" [ngClass]="{'actives': currentItem.taxPercentage != null}">Tax Percentage</label>
+    </div>
+    <div class="input-field col s6">
+      <input #stockInput id="stock" type="text" tabindex="7" [value]="currentItem.stock ? currentItem.stock : ''"
+        (input)="checkNumberOnly($event,'stock')">
+      <label for="stock" [ngClass]="{'actives': (currentItem.stock != null)}">Stock</label>
+    </div>
+    <div class="row no-margin-bottom" *ngIf="currentItem.code">
+      <div class="input-field col s6">
+        <input id="add" type="text" tabindex="8" [value]="currentItem.addStock ? currentItem.addStock : ''"
+          (input)="checkNumberOnly($event,'addStock')">
+        <label for="add" [ngClass]="{'actives': (currentItem.addStock)}">Add Stock</label>
+      </div>
+      <div class="input-field col s6">
+        <input id="sub" type="text" tabindex="9" [value]="currentItem.removeStock ? currentItem.removeStock : ''"
+          (input)="checkNumberOnly($event,'removeStock')">
+        <label for="sub" [ngClass]="{'actives': (currentItem.removeStock)}">Remove Stock</label>
+      </div>
+    </div>
+    <div class="col s8 offset-s2 margin-top-24">
+      <div class="col s3 offset-s1">
+        <div class="thickdarkbluebutton" tabindex="10" (click)="viewAllItems()">View / Edit</div>
+      </div>
+      <div class="col s3 offset-s1">
+        <div class="thickdarkbluebutton" tabindex="11" (click)="saveItem()">{{currentItem.code?'Update':'Save'}}</div>
+      </div>
+      <div class="col s3 offset-s1">
+        <div tabindex="12" class="thickgreybluebutton " (click)="clearItem()">Reset</div>
+      </div>
+    </div>
+  </div>
+</div>
+<generic-lov></generic-lov>

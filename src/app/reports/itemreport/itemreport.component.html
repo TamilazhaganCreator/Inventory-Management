@@ -1,0 +1,33 @@
+<div class="row margin-bottom-4 pad-both-2">
+  <div class="row valign-wrapper" style="margin-top:2rem;">
+    <div class="input-field col s5">
+      <input id="item" type="text" [(ngModel)]="filter.name">
+      <label for="item">Enter an Item Name</label>
+    </div>
+    <div class="input-field col s3" style="margin-top:0">
+      <select materialize="material_select" [(ngModel)]="filter.sortType">
+        <option value="" disabled selected>Sort Type </option>
+        <option value="stock_asc">Stock Asc</option>
+        <option value="stock_desc">Stock Desc</option>
+        <option value="sales_asc">Sales Asc</option>
+        <option value="sales_desc">Sales Desc</option>
+        <option value="purchase_desc">Purchase Asc</option>
+        <option value="purchase_desc">Purchase Desc</option>
+      </select>
+    </div>
+    <div class="col s2">
+      <a class="thickdarkbluebutton" (click)="filterItems()">Search</a>
+    </div>
+    <div class="col s2">
+      <a class="thickdarkbluebutton" (click)="clearFilter()">Clear</a>
+    </div>
+  </div>
+  <hot-table [settings]="hotSettings" hotId="hot"></hot-table>
+</div>
+<div class="row no-margin-bottom bg" id="footer-div">
+  <div class="col s12 nopad valign-wrapper">
+      <div class="col s4 center-align">Total Stock: {{totalStock}}</div>
+    <div class="col s4 center-align">Total Sales: {{totalSales}}</div>
+    <div class="col s4 center-align">Total Purchase: {{totalPurchase}}</div>
+  </div>
+</div>

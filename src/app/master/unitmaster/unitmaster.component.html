@@ -1,0 +1,51 @@
+<div class="row">
+  <h5 class="center-align" style="font-weight:500;;margin-top:1.5rem;">
+    UNIT MASTER
+  </h5>
+  <div class="container">
+    <div class="card" style="margin-top:1rem;border: .5px solid rgb(0,0,0,.25);">
+      <div class="row  table-hdr margin-zero">
+        <div class="col s3">
+          Name
+        </div>
+        <div class=" col s3">
+          Type
+        </div>
+        <div class="col s3">
+          Unit
+        </div>
+        <div class="col s3 center-align ">
+          Actions
+        </div>
+      </div>
+      <div class="row margin-zero" style="height:60vh;overflow-y:auto;">
+        <div *ngIf="allUnits.length > 0">
+          <div class="row margin-zero table-dtl valign-wrapper" *ngFor="let unitObject of allUnits;let _index =index">
+            <div class="col s3">
+              <input #unitNameInputs autocomplete="false" id="item_name" class="no-margin-bottom height-2" type="text" [(ngModel)]="unitObject.name">
+            </div>
+            <div class="col s3">
+              <input id="Type" type="text" autocomplete="false" [(ngModel)]="unitObject.type" class="no-margin-bottom height-2">
+            </div>
+            <div class="col s3">
+              <input id="Unit" type="text" autocomplete="false" [value]="unitObject.unit?unitObject.unit:''" (input)="updateUnitValue($event,_index)"
+                class="no-margin-bottom height-2">
+            </div>
+            <div class="col s3">
+              <div class="col s6 center-align">
+                <div class="thickdarkbluebutton font-8pt" (click)="addUnit(unitObject)">{{unitObject.code?'Update':'Save'}}</div>
+              </div>
+              <div class="col s6 center-align">
+                <div class="thickgreybluebutton font-8pt" (click)="deleteUnit(_index)">Delete</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="center-align" *ngIf="allUnits.length == 0">
+          <h6 class="not-available">There is no unit details available</h6>
+        </div>
+      </div>
+    </div>
+    <a class="btn-floating btn-large" (click)="addEmptyUnit()" style="position:fixed;right:3rem;bottom:3rem;">
+      <i class="material-icons">add</i></a>
+  </div>

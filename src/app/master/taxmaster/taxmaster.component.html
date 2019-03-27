@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="card row margin-top-2">
+    <h5 class="center-align card-title">
+      TAX MASTER
+    </h5>
+    <div class="row">
+      <div class="input-field col s3">
+        <input #nameInput id="cgst_perc" tabindex="1" (input)="checkNumbersValue($event,'cgst_perc')"
+        [value]="(taxObject.cgst_perc !=null) ? taxObject.cgst_perc : ''"  type="text">
+        <label for="cgst_perc" [ngClass]="{'actives': (taxObject.cgst_perc != null )}">CGST
+          Percentage</label>
+      </div>
+      <div class="input-field col s3">
+        <input id="sgst_perc" (input)="checkNumbersValue($event,'sgst_perc')" type="text" tabindex="2"
+          [value]="(taxObject.sgst_perc != null) ? taxObject.sgst_perc : ''">
+        <label for="sgst_perc" [ngClass]="{'actives': (taxObject.sgst_perc != null)}">SGST Percentage</label>
+      </div>
+      <div class="input-field col s3">
+        <input #spInput id="igst_perc" tabindex="3" type="text"
+          [value]="(taxObject.igst_perc !=null) ? taxObject.igst_perc : ''"
+          (input)="checkNumbersValue($event,'igst_perc')">
+        <label for="igst_perc" [ngClass]="{'actives': (taxObject.igst_perc != null)}">IGST Percentage</label>
+      </div>
+      <div class="input-field col s3">
+        <input id="cess_perc" type="text" [value]=" (taxObject.cess_perc != null) ?taxObject.cess_perc:''" tabindex="4"
+          (input)="checkNumbersValue($event,'cess_perc')">
+        <label for="cess_perc" [ngClass]="{'actives': taxObject.cess_perc != null}">Cess Percentage</label>
+      </div>
+    </div>
+    <div class="row no-margin-bottom">
+      <div class="col s8 offset-s2">
+        <div class="col s3 offset-s1">
+          <div class="thickdarkbluebutton" tabindex="5" (click)="viewAllTax()">View / Edit</div>
+        </div>
+        <div class="col s3 offset-s1">
+          <div tabindex="6" class="thickdarkbluebutton " (click)="saveTax()">{{taxObject.code?'Update':'Save'}}
+          </div>
+        </div>
+        <div class="col s3 offset-s1">
+          <div tabindex="7" class="thickgreybluebutton " (click)="clearItem()">{{taxObject.code?'Delete':'Reset'}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<generic-lov></generic-lov>

@@ -1,0 +1,56 @@
+<div>
+  <div style="height:9.6vh" [ngClass]="{'hide': !loggedIn}">
+    <ul id="dropdown1" class="dropdown-content">
+      <li *ngFor="let component of masterComponents"><a (click)="masterNavigate(component)">{{component}}</a></li>
+    </ul>
+    <ul id="dropdown2" class="dropdown-content">
+      <li *ngFor="let component of transactionComponents"><a (click)="transactionNavigate(component)">{{component}}</a>
+      </li>
+    </ul>
+    <ul id="dropdown3" class="dropdown-content">
+      <li *ngFor="let component of reportComponents"><a (click)="reportNavigate(component)">{{component}}</a>
+      </li>
+    </ul>
+    <nav>
+      <div class="nav-wrapper" style="padding-right:1rem;padding-left:1rem;background-color: lightseagreen">
+        <span class="pointer" style="font-size: 2rem;" (click)="backToHome()">Shaalini Traders</span>
+        <ul class="right hide-on-med-and-down">
+          <li><a class="dropdown-button" data-hover="true" data-belowOrigin="true" data-activates="dropdown1">Master<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+          <li><a class="dropdown-button" data-hover="true" data-belowOrigin="true"
+              data-activates="dropdown2">Transaction<i class="material-icons right">arrow_drop_down</i></a></li>
+          <!-- Dropdown Trigger -->
+          <li><a class="dropdown-button" data-hover="true" data-belowOrigin="true" data-activates="dropdown3">Reports<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+          <li><a (click)="logOut()">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div style="height:90vh;overflow-y: auto;width: 100%"  *ngIf="loggedIn">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+<toast-component></toast-component>
+<div class="row" style="margin-top:10%;" *ngIf="!loggedIn">
+  <div class="col s4" style="width:40%;margin-left:30%;">
+    <div class="card">
+      <h5 class="center-align" style="font-weight:500">SHAALINI TRADERS</h5>
+      <div class="input-field col s12">
+        <input id="user" type="text" [(ngModel)]="email">
+        <label for="user">User name</label>
+      </div>
+      <div class="input-field col s12" style="margin-bottom:20px">
+        <input id="pwd" type="password" [(ngModel)]="pwd" (keydown.enter)="login()">
+        <label for="pwd">Password</label>
+      </div>
+      <div class="row">
+        <div class="col s12"><a class="thickdarkbluebutton" (click)="login()">Login</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="loader" class="loading" *ngIf="global.loader">
+  <div id="shadow"></div>
+  <div id="box"></div>
+</div>

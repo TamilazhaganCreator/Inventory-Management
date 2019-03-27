@@ -1,0 +1,55 @@
+<div class="row margin-bottom-4 pad-both-2">
+  <h5 class="page-header">SALES REPORT</h5>
+  <div class="row" style="margin-bottom: 1rem;">
+    <ul class="collapsible" materialize="collapsible" [materializeActions]="filterCollapsible">
+      <li>
+        <div class="collapsible-header"><i class="material-icons">filter_list</i>Filters</div>
+        <div class="collapsible-body">
+          <div class="row margin-bottom-10">
+            <div class="input-field col s3 margin-top-0">
+              <input id="start-date" [materializeParams]="datePickerParams" autocomplete="off"
+                [value]="filter.startDate" type="text" class="datepicker" materialize="pickadate"
+                (input)="setDate($event,'startDate')">
+              <label for="start-date" [ngClass]="{'active': filter.startDate}">Start Date</label>
+            </div>
+            <div class="input-field col s3 margin-top-0">
+              <input id="end-date" [materializeParams]="datePickerParams" [value]="filter.endDate" autocomplete="off"
+                type="text" class="datepicker" materialize="pickadate" (input)="setDate($event,'endDate')">
+              <label [ngClass]="{'active': filter.endDate}" for="end-date">End Date</label>
+            </div>
+            <div class="input-field col s3 margin-top-0">
+              <input id="name" autocomplete="off" type="text" [value]="filter.customerName"
+                (input)="removeValue($event)" (keydown.enter)="getCustomers()">
+              <label for="name">Customer Name</label>
+            </div>
+            <div class="input-field col s3 margin-top-0" style="padding-right:0">
+              <select materialize="material_select" [(ngModel)]="filter.paymentType">
+                <option value="" disabled selected>Payment Type </option>
+                <option value="Credit">Credit</option>
+                <option value="Cash">Cash</option>
+                <option value="Cheque">Cheque</option>
+              </select>
+            </div>
+          </div>
+          <div class="row no-margin-bottom">
+            <div class="col s1 offset-s10">
+              <a class="hollowgreybutton" (click)="clearFilter()"> CLEAR</a>
+            </div>
+            <div class="col s1" style="padding-left:1.5rem;padding-right:0">
+              <a class="thickdarkbluebutton" (click)="applyFilter()"> APPLY</a>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <hot-table [settings]="hotSettings" hotId="hot">
+  </hot-table>
+</div>
+<div class="row no-margin-bottom bg" id="footer-div">
+    <div class="col s12 nopad valign-wrapper">
+        <div class="col s6 center-align">Total Paid: {{paidAmt}}</div>
+      <div class="col s6 center-align">Total Net Amount: {{netAmt}}</div>
+    </div>
+  </div>
+<generic-lov></generic-lov>

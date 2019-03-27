@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="card row" style="margin-top:2rem;">
+    <h5 class="center-align no-margin-bottom" style="margin-top:0rem !important;font-weight: 500 ">
+      {{masterName.toUpperCase()}} MASTER
+    </h5>
+    <div class="row no-margin-bottom">
+      <span style="margin-bottom:24px;color:gray;float:right;font-size:small;padding-right: .75rem">* is mandatory
+        one</span>
+    </div>
+    <div class="row no-margin-bottom">
+      <div class="input-field col s6">
+        <input id="name" tabindex="1" #nameInput type="text" [(ngModel)]="customer.name">
+        <label for="name" [ngClass]="{'actives': customer.name != ''}">Name <sup>*</sup></label>
+      </div>
+      <div class="input-field col s6">
+        <input id="address" tabindex="2" type="text" [(ngModel)]="customer.address">
+        <label for="address"
+          [ngClass]="{'actives': (customer.address != null && customer.address != '')}">Address</label>
+      </div>
+    </div>
+    <div class="row no-margin-bottom">
+      <div class="col s6 nopad">
+        <div class="input-field col s6" style="padding-left:1rem;">
+          <select materialize="material_select" tabindex="3" [(ngModel)]="customer.location">
+            <option value="" disabled selected>Location type *</option>
+            <option value="0">Local</option>
+            <option value="1">Interstate</option>
+          </select>
+          <label>Location <sup>*</sup></label>
+        </div>
+        <div class="input-field col s6">
+          <input id="phone-no" type="number" [value]="customer.mobileNo" tabindex="4"
+            (input)="checkNumberLength('mobileNo',$event)">
+          <label for="phone-no" [ngClass]="{'actives': customer.mobileNo != null}">Mobile no <sup>*</sup></label>
+        </div>
+      </div>
+      <div class="input-field col s6">
+        <input id="email" type="email" tabindex="5" [(ngModel)]="customer.email">
+        <label for="email" [ngClass]="{'actives': (customer.email != null && customer.email != '')}">Email id</label>
+      </div>
+    </div>
+    <div class="row no-margin-bottom">
+      <div class="input-field col s6">
+        <input id="landline" type="number" tabindex="6" [value]="customer.landline"
+          (input)="checkNumberLength('landline',$event)">
+        <label for="phone-no" [ngClass]="{'actives': customer.landline != null}">Landline no</label>
+      </div>
+      <div class="input-field col s6">
+        <input id="gst" type="text" maxlength="15" tabindex="7" minlength="15" [(ngModel)]="customer.gstNo">
+        <label for="gst" [ngClass]="{'actives': customer.gstNo != ''}">GST no <sup>*</sup></label>
+      </div>
+    </div>
+    <div class="row no-margin-bottom">
+      <div class="input-field col s4">
+        <input id="money" type="number" readonly [value]="customer.amount">
+        <label for="money" [ngClass]="{'actives': customer.amount != null}">Amount</label>
+      </div>
+      <div class="input-field col s4">
+        <input id="add" type="text" (input)="checkAmt($event,'moneyReceived')" tabindex="8"
+          [value]="customer.moneyReceived">
+        <label for="add" [ngClass]="{'actives': customer.moneyReceived}">Money Received </label>
+      </div>
+      <div class="input-field col s4">
+        <input id="sub" type="text" tabindex="9" (input)="checkAmt($event,'creditMoney')"
+          [value]="customer.creditMoney">
+        <label for="sub" [ngClass]="{'actives': customer.creditMoney}">Add Credit Money </label>
+      </div>
+    </div>
+    <div class="col s8 offset-s2 margin-top-24">
+      <div class="col s3 offset-s1">
+        <div class="thickdarkbluebutton" (click)="viewAllItems()">View / Edit</div>
+      </div>
+      <div class="col s3 offset-s1">
+        <div class="thickdarkbluebutton" tabindex="10" (click)="saveCustomer()">{{customer.code?'Update':'Save'}}</div>
+      </div>
+      <div class="col s3 offset-s1">
+        <div tabindex="11" class="thickgreybluebutton " (click)="clearDetails()">Reset</div>
+      </div>
+    </div>
+  </div>
+</div>
+<generic-lov></generic-lov>
