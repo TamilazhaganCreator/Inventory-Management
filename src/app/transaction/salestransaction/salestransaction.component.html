@@ -242,9 +242,9 @@
 <generic-lov></generic-lov>
 <div id="bill" *ngIf="billShow" style=" width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">
   <div class="row no-margin-bottom" style="border:1px solid black">
-    <div class="row center-align bill-hdr">
-      <div style="margin-top: .7rem;">
-        <div class="col s6 offset-s3" style="font-size:.75rem">
+    <div class="row no-margin-bottom center-align bill-hdr">
+      <div style="margin-top: .3rem;">
+        <div class="col s6 offset-s3" style="font-size:.75rem;margin-top:.4rem;">
           Sri Ayyanar Thunai
         </div>
         <div class="col s3">
@@ -256,7 +256,7 @@
             9080537678</div>
         </div>
       </div>
-      <h4 style="font-weight:500">SHAALINI TRADERS</h4>
+      <h4 style="font-weight:500;margin-top:0">SHAALINI TRADERS</h4>
       <div>
         Factory: No.2, Lotus Colony, 3rd Street, Thattankulam Road, Madhavaram, Chennai-60
       </div>
@@ -288,13 +288,13 @@
       </div>
     </div>
     <div class="row no-margin-bottom bill-customer-dtl" style="border-bottom: 1px solid;">
-      <div class="col s6" style="padding: 8px;">
-        <div style="font-weight:500">Customer Details:</div>
+      <div class="col s6" style="padding: 8px;font-size:.95rem;">
+        <div style="font-weight:500;font-size: .9rem;">Customer Details:</div>
         <div>{{salesHeader.customerName}}</div>
         <div>{{salesHeader.customerAddress}}</div>
         <div>GSTIN: {{salesHeader.customerGSTNo}}</div>
       </div>
-      <div class="col s6" style="    padding: 8px;border-left: 1px solid;">
+      <div class="col s6" style="padding: 8px;border-left: 1px solid;padding-bottom: 1.1rem;">
         <div class="col s6">Invoice No: {{salesHeader.invoiceNo}} </div>
         <div class="col s6">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
         <div class="col s12">Sales under from: GST sales</div>
@@ -359,17 +359,17 @@
         <div>4.Subject to chennai jurisdiction</div>
       </div>
       <div class="col s5 center-align" style="padding-right:0">
-        <div class="col s6 total-left">Total Amount</div>
+        <div class="col s6 total-left">Total </div>
         <div class="col s6 right-align total-right">{{salesHeader.netAmt - salesHeader.taxAmt}}</div>
-        <div class="col s6 total-left">CGST Amount @ {{salesDetails[0].cgst_perc}}</div>
+        <div class="col s6 total-left">CGST @ {{salesDetails[0].cgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
-        <div class="col s6 total-left">SGST Amount @ {{salesDetails[0].sgst_perc}}</div>
+        <div class="col s6 total-left">SGST @ {{salesDetails[0].sgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getSgstAmt()}}</div>
-        <div class="col s6 total-left">IGST Amount @ {{salesDetails[0].igst_perc}}</div>
+        <div class="col s6 total-left">IGST @ {{salesDetails[0].igst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getIgstAmt()}}</div>
         <div class="col s6 total-left">Other Charges</div>
         <div class="col s6 right-align total-right">{{salesHeader.otherCharges}}</div>
-        <div class="col s6 total">Total Amt with tax</div>
+        <div class="col s6 total">Total with tax</div>
         <div class="col s6 right-align total">{{salesHeader.netAmt}}</div>
       </div>
     </div>

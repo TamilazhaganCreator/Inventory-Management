@@ -85,7 +85,7 @@
 
   .bill-dtl{
       padding-top: 10px;
-      height: 105.5mm;
+      height: 108mm;
       overflow-y: hidden;
   }
 
@@ -108,7 +108,7 @@
   }
 
   .bill-customer-dtl{
-    height: 33mm;
+    height: 35mm;
     overflow: hidden;
   }
 
