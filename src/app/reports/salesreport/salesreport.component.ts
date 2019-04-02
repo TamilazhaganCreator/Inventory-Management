@@ -115,7 +115,10 @@ export class SalesReportComponent implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.global.loader = true;
     this.getSales()
+    },100);
   }
 
   private getSales() {

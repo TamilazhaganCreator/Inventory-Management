@@ -50,6 +50,18 @@
         <label for="sub" [ngClass]="{'actives': (currentItem.removeStock)}">Remove Stock</label>
       </div>
     </div>
+    <div class="row no-margin-bottom" *ngIf="currentItem.code">
+        <div class="input-field col s6">
+          <input id="lessSales" type="text" tabindex="8" [value]="currentItem.lessSales ? currentItem.lessSales : ''"
+            (input)="checkNumberOnly($event,'lessSales')">
+          <label for="lessSales" [ngClass]="{'actives': (currentItem.lessSales)}">Less Sales</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="lessPurchase" type="text" tabindex="9" [value]="currentItem.lessPurchase ? currentItem.lessPurchase : ''"
+            (input)="checkNumberOnly($event,'lessPurchase')">
+          <label for="lessPurchase" [ngClass]="{'actives': (currentItem.lessPurchase)}">Less Purchase</label>
+        </div>
+      </div>
     <div class="col s8 offset-s2 margin-top-24">
       <div class="col s3 offset-s1">
         <div class="thickdarkbluebutton" tabindex="10" (click)="viewAllItems()">View / Edit</div>

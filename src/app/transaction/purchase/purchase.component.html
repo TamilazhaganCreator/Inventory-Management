@@ -242,19 +242,23 @@
   </div>
 </div>
 <generic-lov></generic-lov>
-<div id="bill" *ngIf="billShow" style=" width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">
+<div id="bill" *ngIf="billShow" style="color:black;width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">
   <div class="row no-margin-bottom" style="border:1px solid black">
-    <div class="row center-align bill-hdr">
-      <div style="margin-top: 1rem;">
-        <div class="col s6 offset-s3">
+    <div class="row no-margin-bottom center-align bill-hdr">
+      <div style="margin-top: .3rem;">
+        <div class="col s6 offset-s3" style="font-size:.75rem;margin-top:.4rem;">
           Sri Ayyanar Thunai
         </div>
         <div class="col s3">
-          <div class="col s12 right-align">9380966777</div>
-          <div class="col s12 right-align">9080537678</div>
+          <div _ngcontent-c2="" class="col s12 right-align valign-wrapper pad-left-38">
+            <i class="material-icons phone">phone</i>
+            9380966777</div>
+          <div _ngcontent-c2="" class="col s12 right-align valign-wrapper pad-left-38">
+            <i class="material-icons phone">phone</i>
+            9080537678</div>
         </div>
       </div>
-      <h4 style="font-weight:500">SHAALINI TRADERS</h4>
+      <h4 style="font-weight:500;margin-top:0">SHAALINI TRADERS</h4>
       <div>
         Factory: No.2, Lotus Colony, 3rd Street, Thattankulam Road, Madhavaram, Chennai-60
       </div>
@@ -266,7 +270,7 @@
       </div>
     </div>
     <div class="row no-margin-bottom bill-sub-hdr "
-      style="font-weight:bold;border-top: 1px solid black;border-bottom: 1px solid;">
+      style="font-weight:bold;border-top: 1px solid black;border-bottom: 1px solid black;">
       <div class="col s3">
         State Code
       </div>
@@ -286,31 +290,30 @@
       </div>
     </div>
     <div class="row no-margin-bottom bill-supplier-dtl" style="border-bottom: 1px solid;">
-      <div class="col s6" style="padding: 8px;">
-        <div style="font-weight:500">Supplier Details:</div>
+      <div class="col s6" style="padding: 8px;font-size:.95rem;">
+        <div style="font-weight:500;font-size: .9rem;">Supplier Details:</div>
         <div>{{purchaseHeader.supplierName}}</div>
         <div>{{purchaseHeader.supplierAddress}}</div>
         <div>GSTIN: {{purchaseHeader.supplierGSTNo}}</div>
       </div>
-      <div class="col s6" style="    padding: 8px;border-left: 1px solid;">
+      <div class="col s6" style="padding: 8px;border-left: 1px solid black;padding-bottom: 1.1rem;">
         <div class="col s6">Invoice No: {{purchaseHeader.invoiceNo}} </div>
         <div class="col s6">Date: {{purchaseHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
         <div class="col s12">Purchase under from: GST purchase</div>
         <div class="col s12">
           <p>Dispatch details :</p>
         </div>
-        <div class="col s6">Payment due on 30 days</div>
-        <div class="col s6">Place of supply: Chennai</div>
+        <div class="col s12">Place of supply: Chennai</div>
       </div>
     </div>
-    <div class="row no-margin-bottom center-align bill-table-hdr" style="    border-bottom: 1px solid;">
+    <div class="row no-margin-bottom center-align bill-table-hdr" style="border-bottom: 1px solid black;">
       <div class="col s1" style="padding: 8px;">S.No.</div>
-      <div class="col s5" style="padding: 8px;border-left: 1px solid">Description of Goods</div>
-      <div class="col s2" style="padding: 8px;border-left: 1px solid">HSN Code</div>
+      <div class="col s5" style="padding: 8px;border-left: 1px solid black">Description of Goods</div>
+      <div class="col s2" style="padding: 8px;border-left: 1px solid black">HSN Code</div>
       <div class="col s4 nopad">
-        <div class="col s3" style="padding: 8px;border-left: 1px solid">Qty</div>
-        <div class="col s3" style="padding: 8px;border-left: 1px solid">Rate</div>
-        <div class="col s6" style="padding: 8px;border-left: 1px solid">Total</div>
+        <div class="col s3" style="padding: 8px;border-left: 1px solid black">Qty</div>
+        <div class="col s3" style="padding: 8px;border-left: 1px solid black">Rate</div>
+        <div class="col s6" style="padding: 8px;border-left: 1px solid black">Total</div>
       </div>
     </div>
     <div class="row center-align no-margin-bottom">
@@ -342,41 +345,43 @@
         </div>
         <div class="col s6 right-align bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
-            {{item.netAmt}}
+            {{item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt}}
           </div>
         </div>
       </div>
     </div>
-    <div class="row no-margin-bottom bill-table-footer" style="border-top: 1px solid;border-bottom: 1px solid;">
-      <div class="col s7" style="    padding-top: 8px;padding-bottom: 8px">
-        <div>Terms & Conditions</div>
+    <div class="row no-margin-bottom bill-table-footer" style="border-top: 1px solid black;border-bottom: 1px solid black;">
+      <div class="col s7" style="padding-top: 8px;padding-bottom: 8px">
+        <div style="padding-bottom:2%">Invoice amount in words: <span
+            style="font-weight: 500">{{purchaseHeader.netAmt | numberToWords}} only</span></div>
+        <div><u>Terms & Conditions</u></div>
         <div>1.Interest @24% P.A will be charged immediately after the due date</div>
         <div>2.Our risk responsibly ceases after delivery of the goods</div>
         <div>3.Good once sold canot be taken back or exchanged</div>
         <div>4.Subject to chennai jurisdiction</div>
       </div>
       <div class="col s5 center-align" style="padding-right:0">
-        <div class="col s6 total-left">Total Amount</div>
+        <div class="col s6 total-left">Total </div>
         <div class="col s6 right-align total-right">{{purchaseHeader.netAmt - purchaseHeader.taxAmt}}</div>
-        <div class="col s6 total-left">CGST Amount</div>
+        <div class="col s6 total-left">CGST @ {{purchaseDetails[0].cgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
-        <div class="col s6 total-left">SGST Amount</div>
+        <div class="col s6 total-left">SGST @ {{purchaseDetails[0].sgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getSgstAmt()}}</div>
-        <div class="col s6 total-left">IGST Amount</div>
+        <div class="col s6 total-left">IGST @ {{purchaseDetails[0].igst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getIgstAmt()}}</div>
         <div class="col s6 total-left">Other Charges</div>
         <div class="col s6 right-align total-right">{{purchaseHeader.otherCharges}}</div>
-        <div class="col s6 total">Total Amt with tax</div>
+        <div class="col s6 total">Total with tax</div>
         <div class="col s6 right-align total">{{purchaseHeader.netAmt}}</div>
       </div>
     </div>
     <div class="row no-margin-bottom bill-footer" style="padding:8px">
-      <div class="col s7 nopad">
-        <div style="font-weight:500"><u>Bank Details</u></div>
+      <div class="col s7 nopad" style="font-weight:500">
+        <div><u>Bank Details</u></div>
         <div class="col s3 nopad">Bank Name <span style="float:right">:</span> </div>
         <div class="col s9">City Union Bank</div>
         <div class="col s3 nopad">Bank A/c No <span style="float:right">:</span> </div>
-        <div class="col s9 ">510909010000691</div>
+        <div class="col s9">510909010000691</div>
         <div class="col s3 nopad">IFSC Code<span style="float:right">:</span> </div>
         <div class="col s9">CIUB000313</div>
         <div class="col s3 nopad">Branch <span style="float:right">:</span> </div>

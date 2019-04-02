@@ -180,7 +180,9 @@ export class TransactionService {
         "cgst_perc": item.cgst_perc,
         "sgst_perc": item.sgst_perc,
         "igst_perc": item.igst_perc,
-        "cess_perc": item.cess_perc
+        "cess_perc": item.cess_perc,
+        "sales":item.sales,
+        "purchase":item.purchase
       });
       index++;
     })

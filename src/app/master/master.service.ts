@@ -73,8 +73,8 @@ export class MasterService {
       sgst_perc: value.sgst_perc,
       igst_perc: value.igst_perc,
       cess_perc: value.cess_perc,
-      purchase: 0,
-      sales: 0
+      purchase: value.purchase,
+      sales: value.sales
     });
   }
 

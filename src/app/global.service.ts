@@ -10,6 +10,7 @@ import { SerialNumbersModel } from './global.model';
 export class GlobalService {
 
   loader: boolean = false
+  routeLoader:boolean = false
   numberOnlyFormatRegex: RegExp = /^[0-9]*$/; 
   numberwith2DecimalRegex: RegExp = /^\d{0,6}(?:\.\d{0,2})?$/;
   private toastShow = new Subject<[String, String, Boolean]>()

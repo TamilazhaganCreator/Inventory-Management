@@ -63,7 +63,10 @@ export class CustomerreportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getCustomers()
+    setTimeout(() => {
+      this.global.loader = true;
+      this.getCustomers()
+    }, 100);
   }
 
   getCustomers() {

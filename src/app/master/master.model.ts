@@ -30,6 +30,8 @@ export class ItemModel {
     purchase: number;
     addStock: number = 0;
     removeStock: number = 0;
+    lessPurchase: number = 0;
+    lessSales: number = 0;
 }
 
 export class CustomerModel {

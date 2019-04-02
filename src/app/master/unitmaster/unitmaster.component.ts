@@ -58,31 +58,26 @@ export class UnitmasterComponent implements OnInit {
   }
 
   addUnit(unitObject: UnitModel) {
-    if (unitObject.code == null) {
-      if (unitObject.name != null && unitObject.name != "" && unitObject.type != null && unitObject.type != "" && unitObject.unit != null) {
-        if (this.allUnits.findIndex(unit => unit.name == unitObject.name) > -1) {
-          this.global.loader = true
-          unitObject.code = this.latestId
-          this.service.addUnit(unitObject)
-            .then(
-              res => {
-                this.updateSerials()
-              }
-            ).catch((error) => {
-              this.global.loader = false
-              this.global.showToast("Error occured" + error, "error", true)
-              console.log("Error getting cached document:" + error, "error", true);
-            });
-        } else {
-          this.global.showToast("Existing unit name not allowed", "warning", false)
-        }
+    if (unitObject.name != null && unitObject.name != "" && unitObject.type != null && unitObject.type != "" && unitObject.unit != null) {
+      if (unitObject.code == null) {
+        this.global.loader = true
+        unitObject.code = this.latestId
+        this.service.addUnit(unitObject)
+          .then(
+            res => {
+              this.updateSerials()
+            }
+          ).catch((error) => {
+            this.global.loader = false
+            this.global.showToast("Error occured" + error, "error", true)
+            console.log("Error getting cached document:" + error, "error", true);
+          });
       } else {
-        this.global.showToast("Kindly fill the all details", "warning", false)
+        this.updateUnit(unitObject)
       }
     } else {
-      this.updateUnit(unitObject)
+      this.global.showToast("Kindly fill the all details", "warning", false)
     }
-
   }
 
   updateUnit(unitObject: UnitModel) {

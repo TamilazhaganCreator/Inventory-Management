@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { AuthService } from './auth.service';
 import { GlobalService } from './global.service';
+import { SerialNumbersModel } from './global.model';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +19,20 @@ export class AppComponent implements OnInit {
   transactionComponents = ["sales", "purchase"]
   reportComponents = ["sales", "purchase", "items", "customer", "supplier"]
 
-  constructor(public global: GlobalService, private router: Router, private auth: AuthService) { }
+  constructor(public global: GlobalService, private router: Router, private auth: AuthService) {
+    this.router.events.forEach((event) => {
+      if (event instanceof NavigationStart) {
+        this.global.routeLoader = true
+      } else if (event instanceof NavigationEnd) {
+        this.global.routeLoader = false
+      }
+    })
+  }
 
   ngOnInit() {
     if (localStorage.getItem('loginStatus') == "LoggedIn") {
       this.loggedIn = true
+      this.getSerials();
     } else {
       this.loggedIn = false
     }
@@ -32,7 +42,6 @@ export class AppComponent implements OnInit {
     if (this.router.url == "/master/" + route) {
       return;
     }
-    this.global.loader = true
     this.router.navigate(['/master/' + route])
   }
 
@@ -40,7 +49,6 @@ export class AppComponent implements OnInit {
     if (this.router.url == "/transaction/" + route) {
       return;
     }
-    this.global.loader = true
     this.router.navigate(['/transaction/' + route])
   }
 
@@ -48,7 +56,6 @@ export class AppComponent implements OnInit {
     if (this.router.url == "/report/" + route) {
       return;
     }
-    this.global.loader = true
     this.router.navigate(['/report/' + route])
   }
 
@@ -91,5 +98,27 @@ export class AppComponent implements OnInit {
         this.global.loader = false
         this.global.showToast("Logout failed", "warning", false)
       })
+  }
+
+  private getSerials() {
+    setTimeout(() => {
+      this.global.loader = true;
+      this.global.getLatestSerial()
+        .subscribe(res => {
+          if (res.docs.length == 0) {
+            let serials = new SerialNumbersModel();
+            serials.unitMaster = serials.taxMaster = serials.supplierMaster = serials.customerMaster = serials.itemMaster = 0;
+            serials.salesHeader = serials.purchaseHeader = 0;
+            this.global.setLatestSerial(serials).then(res => {
+              this.global.loader = false;
+            }).catch(e => {
+              this.global.showToast("Error occured" + e, "error", true);
+            });
+          }
+          else {
+            this.global.loader = false;
+          }
+        });
+    }, 100);
   }
 }

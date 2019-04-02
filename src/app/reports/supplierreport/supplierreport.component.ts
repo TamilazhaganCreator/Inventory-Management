@@ -63,7 +63,10 @@ export class SupplierreportComponent implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.global.loader = true;
     this.getSuppliers()
+    },100);
   }
 
   getSuppliers() {

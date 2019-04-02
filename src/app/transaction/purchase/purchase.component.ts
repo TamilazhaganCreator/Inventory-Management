@@ -1,7 +1,7 @@
 import { MasterService } from './../../master/master.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, EventEmitter, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, EventEmitter, QueryList, ViewChild, ViewChildren, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MaterializeAction } from 'angular2-materialize';
 import * as html2canvas from 'html2canvas';
 import * as jspdf from 'jspdf';
@@ -26,7 +26,7 @@ import { TransactionService } from '../transaction.service';
     ])
   ]
 })
-export class PurchaseComponent {
+export class PurchaseComponent implements OnInit {
 
   invoiceDatePickerParams = [
     {
@@ -80,7 +80,7 @@ export class PurchaseComponent {
   billShow: boolean = false
 
   constructor(private lovService: GenericLovService, private global: GlobalService, private service: TransactionService,
-    private router: ActivatedRoute, private masterService: MasterService) {
+    private router: ActivatedRoute, private masterService: MasterService, private routerChange: Router) {
     this.subscriptions[0] = this.lovService.getLovItem()
       .subscribe(res => {
         if (res[1] == "items") {
@@ -125,10 +125,9 @@ export class PurchaseComponent {
       subscribe(params => {
         let id = params['purchaseId']
         if (id) {
-          this.global.loader = true
           this.service.getHeaderDetails("purchaseHeader", id)
             .subscribe((res) => {
-              this.global.loader = true
+              this.global.routeLoader = true
               let temHeader = res.data() as PurchaseHeaderModel
               this.masterService.getItem("suppliermaster", temHeader.supplierCode.toString())
                 .subscribe((sup) => {
@@ -137,7 +136,6 @@ export class PurchaseComponent {
                   temHeader.supplierAmt = supplier.amount
                   this.service.getTransactionDetails("purchaseDetail", id)
                     .then((res) => {
-                      this.global.loader = true
                       let index = 0
                       this.purchaseDetails = []
                       res.forEach(doc => {
@@ -146,7 +144,7 @@ export class PurchaseComponent {
                       })
                       temHeader.invoiceDate = new Date(temHeader.timestamp)
                       this.purchaseHeader = temHeader
-                      this.global.loader = false
+                      this.global.routeLoader = false
                       this.global.showToast("Purchase details for that row - [ READ ONLY MODE ]", "success", true)
                     }, error => {
                       this.global.showToast("Error occurred" + error, "error", true)
@@ -157,11 +155,15 @@ export class PurchaseComponent {
             }, error => {
               this.global.showToast("Error occurred" + error, "error", true)
             })
-        } else {
-          this.global.loader = true
-          this.getLatestItem()
         }
       });
+  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.global.loader = true;
+      this.getLatestItem()
+    }, 100);
   }
 
   resetSales() {
@@ -214,19 +216,13 @@ export class PurchaseComponent {
       .then(res => {
         this.service.deletePurchaseDetail(this.purchaseDetails, this.purchaseHeader.id.toString())
           .then(res => {
-            this.service.updateItemDetails(this.getItemArray(false))
+            let amount = this.removeCustomerAmt()
+            this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
               .then(res => {
-                if (this.purchaseHeader.paymentType != 1) {
-                  let amount = this.removeCustomerAmt()
-                  this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
-                    .then(res => {
-                      this.global.showToast("Sales deleted successfully", "sucess", false)
-                    }).catch(e => {
-                      this.global.showToast("Error occured" + e, "error", true)
-                    })
-                } else {
-                  this.printBill()
-                }
+                this.global.loader = false
+                this.resetSales()
+                this.routerChange.navigate(['/transaction/sales'])
+                this.global.showToast("Purchase deleted successfully", "sucess", false)
               }).catch(e => {
                 this.global.showToast("Error occured" + e, "error", true)
               })
@@ -446,6 +442,7 @@ export class PurchaseComponent {
     this.global.loader = true
     this.resetSales()
     this.global.loader = false
+    this.routerChange.navigate(['/transaction/purchase'])
     this.global.showToast("Cleared Successfully", "warning", false)
   }
 
@@ -521,17 +518,13 @@ export class PurchaseComponent {
           .then(res => {
             this.service.updateItemDetails(this.getItemArray(true))
               .then(res => {
-                if (this.purchaseHeader.paymentType != 1) {
-                  let amount = this.getsupplierAmt()
-                  this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
-                    .then(res => {
-                      this.printBill();
-                    }).catch(e => {
-                      this.global.showToast("Error occured" + e, "error", true)
-                    })
-                } else {
-                  this.printBill()
-                }
+                let amount = this.getsupplierAmt()
+                this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
+                  .then(res => {
+                    this.printBill();
+                  }).catch(e => {
+                    this.global.showToast("Error occured" + e, "error", true)
+                  })
               }).catch(e => {
                 this.global.showToast("Error occured" + e, "error", true)
               })

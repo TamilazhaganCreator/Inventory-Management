@@ -115,7 +115,10 @@ export class PurchaseReportComponent implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.global.loader = true;
     this.getPurchase()
+    },100);
   }
 
   private getPurchase() {

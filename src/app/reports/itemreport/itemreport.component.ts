@@ -69,7 +69,10 @@ export class ItemreportComponent implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.global.loader = true;
     this.getItems()
+    },100);
   }
 
   getItems() {

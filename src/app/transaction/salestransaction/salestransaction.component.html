@@ -25,13 +25,18 @@
             (input)="setInvoiceDate($event)" [readOnly]="salesHeader.id">
           <label for="invoice-date" [ngClass]="{'actives': salesHeader.invoiceDate != null}">Invoice Date</label>
         </div>
-        <div class="col s3" *ngIf="paymentTypeShow">
+        <div class="col s3" *ngIf="paymentTypeShow && salesHeader.id == null">
           <select materialize="material_select" [value]="salesHeader.paymentType" (change)="setPaymentType($event)">
             <option value="" disabled selected>Payment Type </option>
             <option value="0">Credit</option>
             <option value="1">Cash</option>
             <option value="2">Cheque</option>
           </select>
+        </div>
+        <div class="input-field col s3 margin-top-0" *ngIf="salesHeader.id">
+          <input readOnly type="text" class="pointer" id="p-type" (click)="showChq()"
+            [value]="salesHeader.paymentType == 0? 'Credit':salesHeader.paymentType == 1?'Cash':'Cheque'">
+          <label for="p-type" class="active">Payment type</label>
         </div>
       </div>
       <div class="row no-margin-bottom">
@@ -176,10 +181,10 @@
   </div>
   <div class="row margin-both-2">
     <div class="col s2 offset-s6">
-      <a class="hollowgreybutton" *ngIf="salesHeader.id" (click)="delete()">Delete</a>
+      <a class="hollowgreybutton" *ngIf="salesHeader.id" (click)="deleteModal()">Delete</a>
     </div>
     <div class="col s2">
-      <a class="hollowgreybutton" (click)="clearAll()"> CLEAR</a>
+      <a class="hollowgreybutton" (click)="clearProcess()"> CLEAR</a>
     </div>
     <div class="col s2" style="padding-left:1.5rem;padding-right:0">
       <a class="thickdarkbluebutton" (click)="endProcess()">{{salesHeader.id? 'Print':'Submit'}}</a>
@@ -193,35 +198,38 @@
     <div class="modal-content">
       <div class="row no-margin-bottom">
         <div class="input-field col s12 margin-top-0 ">
-          <input autocomplete="off" type="text" id="bank-name" class="margin-zero" [(ngModel)]="salesHeader.chqBank">
-          <label for="bank-name">Bank Name</label>
+          <input autocomplete="off" [readOnly]="salesHeader.id" type="text" id="bank-name" class="margin-zero"
+            [(ngModel)]="salesHeader.chqBank">
+          <label for="bank-name" [ngClass]="{'actives' : salesHeader.chqBank}">Bank Name</label>
         </div>
       </div>
       <div class="row no-margin-bottom">
         <div class="input-field col s12 ">
           <input autocomplete="off" autocomplete="off" maxlength="6" id="chNo" type="text"
-            [(ngModel)]="salesHeader.chqNo" class="margin-zero">
-          <label for="chNo">Cheque No</label>
+            [(ngModel)]="salesHeader.chqNo" class="margin-zero" [readOnly]="salesHeader.id">
+          <label for="chNo" [ngClass]="{'actives' : salesHeader.chqNo}">Cheque No</label>
         </div>
       </div>
       <div class="row no-margin-bottom">
         <div class="input-field col s12">
           <input autocomplete="off" type="date" min="2018-01-01" (keydown)="false" max="2050-01-01"
-            [(ngModel)]="salesHeader.chqDate" class="margin-zero">
+            [(ngModel)]="salesHeader.chqDate" class="margin-zero" [readOnly]="salesHeader.id">
         </div>
       </div>
       <div class="row no-margin-bottom">
         <div class="input-field col s12 ">
           <input autocomplete="off" autocomplete="off" id="chqAmt" type="text"
             [value]="salesHeader.chqAmt?salesHeader.chqAmt:''" (input)="checkNumberValue($event,'chqAmt')"
-            class="margin-zero" maxlength="10">
-          <label id="chqAmt" for="chNo">Cheque Amount</label>
+            class="margin-zero" maxlength="10" [readOnly]="salesHeader.id">
+          <label [ngClass]="{'actives' : salesHeader.chqAmt}" id="chqAmt" for="chNo">Cheque Amount</label>
         </div>
       </div>
     </div>
     <div class="modal-footer" style="border-top:1px solid rgba(0,0,0,0.1)">
-      <a #clearChqButton class="modal-action modal-close  btn-flat" (click)="clearChqDetails()">Cancel</a>
-      <a #saveChqButton class="modal-action  btn-flat" (click)="saveChqDetails()">Save</a>
+      <a #clearChqButton class="modal-action modal-close  btn-flat"
+        (click)="clearChqDetails()">{{salesHeader.id?'Close':'Cancel'}}</a>
+      <a #saveChqButton [ngClass]="{'disabled' : salesHeader.id}" class="modal-action  btn-flat"
+        (click)="saveChqDetails()">Save</a>
     </div>
   </div>
   <div id="modal2" class="modal" materialize="modal" [materializeActions]="confirmationModal"
@@ -230,8 +238,14 @@
       <h5 class="modal-header-title" style="display:inline-block;padding-top:2.4%;padding-bottom: 2.4%">
         {{confimationModalHeader}}</h5>
     </div>
-    <div class="modal-content">
-      Are you sure want to {{confimationModalHeader.toLowerCase()}} ?
+    <div class="modal-content row no-margin-bottom">
+      <div *ngIf="confimationModalHeader != 'Delete'">
+        Are you sure want to {{confimationModalHeader.toLowerCase()}} ?
+      </div>
+      <div class="input-field col s12 margin-top-0" *ngIf="confimationModalHeader == 'Delete'">
+        <input id="first_name" type="text" class="validate" [(ngModel)]="deletePwd">
+        <label for="first_name">Enter password</label>
+      </div>
     </div>
     <div class="modal-footer">
       <a class="modal-action modal-close btn-flat">No</a>
@@ -240,7 +254,7 @@
   </div>
 </div>
 <generic-lov></generic-lov>
-<div id="bill" *ngIf="billShow" style=" width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">
+<div id="bill" *ngIf="billShow" style="color:black;width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">
   <div class="row no-margin-bottom" style="border:1px solid black">
     <div class="row no-margin-bottom center-align bill-hdr">
       <div style="margin-top: .3rem;">
@@ -268,7 +282,7 @@
       </div>
     </div>
     <div class="row no-margin-bottom bill-sub-hdr "
-      style="font-weight:bold;border-top: 1px solid black;border-bottom: 1px solid;">
+      style="font-weight:bold;border-top: 1px solid black;border-bottom: 1px solid black;">
       <div class="col s3">
         State Code
       </div>
@@ -294,7 +308,7 @@
         <div>{{salesHeader.customerAddress}}</div>
         <div>GSTIN: {{salesHeader.customerGSTNo}}</div>
       </div>
-      <div class="col s6" style="padding: 8px;border-left: 1px solid;padding-bottom: 1.1rem;">
+      <div class="col s6" style="padding: 8px;border-left: 1px solid black;padding-bottom: 1.1rem;">
         <div class="col s6">Invoice No: {{salesHeader.invoiceNo}} </div>
         <div class="col s6">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
         <div class="col s12">Sales under from: GST sales</div>
@@ -304,14 +318,14 @@
         <div class="col s12">Place of supply: Chennai</div>
       </div>
     </div>
-    <div class="row no-margin-bottom center-align bill-table-hdr" style="    border-bottom: 1px solid;">
+    <div class="row no-margin-bottom center-align bill-table-hdr" style="border-bottom: 1px solid black;">
       <div class="col s1" style="padding: 8px;">S.No.</div>
-      <div class="col s5" style="padding: 8px;border-left: 1px solid">Description of Goods</div>
-      <div class="col s2" style="padding: 8px;border-left: 1px solid">HSN Code</div>
+      <div class="col s5" style="padding: 8px;border-left: 1px solid black">Description of Goods</div>
+      <div class="col s2" style="padding: 8px;border-left: 1px solid black">HSN Code</div>
       <div class="col s4 nopad">
-        <div class="col s3" style="padding: 8px;border-left: 1px solid">Qty</div>
-        <div class="col s3" style="padding: 8px;border-left: 1px solid">Rate</div>
-        <div class="col s6" style="padding: 8px;border-left: 1px solid">Total</div>
+        <div class="col s3" style="padding: 8px;border-left: 1px solid black">Qty</div>
+        <div class="col s3" style="padding: 8px;border-left: 1px solid black">Rate</div>
+        <div class="col s6" style="padding: 8px;border-left: 1px solid black">Total</div>
       </div>
     </div>
     <div class="row center-align no-margin-bottom">
@@ -348,10 +362,11 @@
         </div>
       </div>
     </div>
-    <div class="row no-margin-bottom bill-table-footer" style="border-top: 1px solid;border-bottom: 1px solid;">
+    <div class="row no-margin-bottom bill-table-footer"
+      style="border-top: 1px solid black;border-bottom: 1px solid black;">
       <div class="col s7" style="padding-top: 8px;padding-bottom: 8px">
         <div style="padding-bottom:2%">Invoice amount in words: <span
-            style="font-weight: 500">{{(salesHeader.netAmt - salesHeader.taxAmt) | numberToWords}} only</span></div>
+            style="font-weight: 500">{{salesHeader.netAmt | numberToWords}} only</span></div>
         <div><u>Terms & Conditions</u></div>
         <div>1.Interest @24% P.A will be charged immediately after the due date</div>
         <div>2.Our risk responsibly ceases after delivery of the goods</div>

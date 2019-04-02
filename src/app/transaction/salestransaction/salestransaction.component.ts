@@ -1,7 +1,6 @@
-import { MasterService } from './../../master/master.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MaterializeAction } from 'angular2-materialize';
 import * as html2canvas from 'html2canvas';
 import * as jspdf from 'jspdf';
@@ -12,6 +11,7 @@ import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model'
 import { SalesDetailModel, SalesHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
 import { SerialNumbersModel } from './../../global.model';
+import { MasterService } from './../../master/master.service';
 
 @Component({
   selector: 'app-salestransaction',
@@ -66,6 +66,7 @@ export class SalestransactionComponent implements OnInit {
   confirmationModal = new EventEmitter<string | MaterializeAction>();
   private serials = new SerialNumbersModel()
   private latestId = 0
+  deletePwd = ""
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
   @ViewChildren("spInputs") private spInputs: QueryList<any>;
@@ -80,27 +81,33 @@ export class SalestransactionComponent implements OnInit {
   billShow: boolean = false
 
   constructor(private lovService: GenericLovService, private global: GlobalService, private service: TransactionService,
-    private router: ActivatedRoute, private masterService: MasterService) {
+    private router: ActivatedRoute, private masterService: MasterService, private routerChange: Router) {
     this.subscriptions[0] = this.lovService.getLovItem()
       .subscribe(res => {
         if (res[1] == "itemsSales") {
           var item = res[0] as ItemModel
-          this.salesDetails[res[2]].itemCode = item.code
-          this.salesDetails[res[2]].itemName = item.name
-          this.salesDetails[res[2]].hsncode = item.hsncode
-          this.salesDetails[res[2]].taxPercentage = item.taxPercentage
-          this.salesDetails[res[2]].cgst_perc = item.cgst_perc
-          this.salesDetails[res[2]].sgst_perc = item.sgst_perc
-          this.salesDetails[res[2]].igst_perc = item.igst_perc
-          this.salesDetails[res[2]].cess_perc = item.cess_perc
-          this.salesDetails[res[2]].unitType = item.unitType
-          this.salesDetails[res[2]].unitName = item.unitName
-          this.salesDetails[res[2]].stockValue = item.stock
-          this.salesDetails[res[2]].sales = item.sales
-          this.salesDetails[res[2]].purchase = item.purchase
-          this.salesDetails[res[2]].unit = item.unit
-          this.salesDetails[res[2]].sp = item.sp
-          this.setElementFocus(this.quantityInputs, res[2])
+          let index = this.salesDetails.findIndex(i => i.itemCode == item.code)
+          if (index == -1) {
+            this.salesDetails[res[2]].itemCode = item.code
+            this.salesDetails[res[2]].itemName = item.name
+            this.salesDetails[res[2]].hsncode = item.hsncode
+            this.salesDetails[res[2]].taxPercentage = item.taxPercentage
+            this.salesDetails[res[2]].cgst_perc = item.cgst_perc
+            this.salesDetails[res[2]].sgst_perc = item.sgst_perc
+            this.salesDetails[res[2]].igst_perc = item.igst_perc
+            this.salesDetails[res[2]].cess_perc = item.cess_perc
+            this.salesDetails[res[2]].unitType = item.unitType
+            this.salesDetails[res[2]].unitName = item.unitName
+            this.salesDetails[res[2]].stockValue = item.stock
+            this.salesDetails[res[2]].sales = item.sales
+            this.salesDetails[res[2]].purchase = item.purchase
+            this.salesDetails[res[2]].unit = item.unit
+            this.salesDetails[res[2]].sp = item.sp
+            this.setElementFocus(this.quantityInputs, res[2])
+          } else {
+            this.setElementFocus(this.itemCodeInputs, res[2])
+            this.global.showToast("Item duplication not allowed", "warning", false)
+          }
         } else if (res[1] == "Customer") {
           var customer = res[0] as CustomerModel
           this.salesHeader.customerName = customer.name
@@ -121,13 +128,13 @@ export class SalestransactionComponent implements OnInit {
           this.salesDetailsCalculation(res[2])
         }
       })
-    this.router.queryParams.
+    this.subscriptions[1] = this.router.queryParams.
       subscribe(params => {
         let id = params['salesId']
         if (id) {
-          this.global.loader = true
           this.service.getHeaderDetails("salesheader", id)
             .subscribe((res) => {
+              this.global.routeLoader = true
               let temHeader = res.data() as SalesHeaderModel
               this.masterService.getItem("customermaster", temHeader.customerCode.toString())
                 .subscribe((cust) => {
@@ -146,7 +153,7 @@ export class SalestransactionComponent implements OnInit {
                       temHeader.invoiceDate = new Date(temHeader.timestamp)
                       this.salesHeader = temHeader
                       this.salesHeader.customerValid = true
-                      this.global.loader = false
+                      this.global.routeLoader = false
                       this.global.showToast("Sales details for that row - [ READ ONLY MODE ]", "success", true)
                     }, error => {
                       this.global.showToast("Error occurred" + error, "error", true)
@@ -157,14 +164,14 @@ export class SalestransactionComponent implements OnInit {
             }, error => {
               this.global.showToast("Error occurred" + error, "error", true)
             })
-        } else {
-          this.getLatestItem()
         }
       });
   }
 
   ngOnInit() {
-    this.global.loader = true
+    setTimeout(() => {
+      this.getLatestItem()
+    }, 100);
   }
 
   resetSales() {
@@ -337,7 +344,12 @@ export class SalestransactionComponent implements OnInit {
     } else if (this.salesHeader.paymentType == 1) {
       this.salesHeader.paidAmt = null
     }
+  }
 
+  showChq() {
+    if (this.salesHeader.paymentType == 2) {
+      this.openChqModal()
+    }
   }
 
   openChqModal() {
@@ -375,18 +387,20 @@ export class SalestransactionComponent implements OnInit {
   }
 
   clearChqDetails() {
-    this.paymentTypeShow = false
-    setTimeout(() => {
-      this.paymentTypeShow = true
-    }, 100);
-    this.salesHeader.paymentType = 0
-    if (this.salesHeader.chqDate != null && this.salesHeader.chqNo != null && this.salesHeader.chqAmt
-      && (this.salesHeader.chqBank != null && this.salesHeader.chqBank != "")) {
-      this.salesHeader.chqDate = null
-      this.salesHeader.chqNo = 0
-      this.salesHeader.chqAmt = null
-      this.salesHeader.chqBank = ""
-      this.global.showToast("Cheque details are cleared successfully", "warning", false)
+    if (!this.salesHeader.id) {
+      this.paymentTypeShow = false
+      setTimeout(() => {
+        this.paymentTypeShow = true
+      }, 100);
+      this.salesHeader.paymentType = 0
+      if (this.salesHeader.chqDate != null && this.salesHeader.chqNo != null && this.salesHeader.chqAmt
+        && (this.salesHeader.chqBank != null && this.salesHeader.chqBank != "")) {
+        this.salesHeader.chqDate = null
+        this.salesHeader.chqNo = 0
+        this.salesHeader.chqAmt = null
+        this.salesHeader.chqBank = ""
+        this.global.showToast("Cheque details are cleared successfully", "warning", false)
+      }
     }
   }
 
@@ -402,6 +416,7 @@ export class SalestransactionComponent implements OnInit {
     this.global.loader = true
     this.resetSales()
     this.global.loader = false
+    this.routerChange.navigate(['/transaction/sales'])
     this.global.showToast("Cleared Successfully", "warning", false)
   }
 
@@ -414,9 +429,14 @@ export class SalestransactionComponent implements OnInit {
     this.openSubmitModal()
   }
 
+  deleteModal() {
+    this.confimationModalHeader = "Delete"
+    this.openSubmitModal()
+  }
+
   endProcess() {
     if (this.salesHeader.id) {
-      this.printBill()
+      this.printBill(false)
     } else {
       this.submitProcess()
     }
@@ -470,6 +490,13 @@ export class SalestransactionComponent implements OnInit {
       this.clearAll()
     } else if (this.confimationModalHeader == "Submit") {
       this.submitToServer()
+    } else if (this.confimationModalHeader == "Delete") {
+      let pwd = this.salesHeader.id + this.salesHeader.netAmt + new Date().getDate()
+      if (this.deletePwd == pwd.toString()) {
+        this.delete()
+      } else {
+        this.global.showToast("Invalid password", "warning", false)
+      }
     }
   }
 
@@ -483,17 +510,13 @@ export class SalestransactionComponent implements OnInit {
           .then(res => {
             this.service.updateItemDetails(this.getItemArray(true))
               .then(res => {
-                if (this.salesHeader.paymentType != 1) {
-                  let amount = this.getCustomerAmt()
-                  this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
-                    .then(res => {
-                      this.printBill()
-                    }).catch(e => {
-                      this.global.showToast("Error occured" + e, "error", true)
-                    })
-                } else {
-                  this.printBill()
-                }
+                let amount = this.getCustomerAmt()
+                this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
+                  .then(res => {
+                    this.printBill(true)
+                  }).catch(e => {
+                    this.global.showToast("Error occured" + e, "error", true)
+                  })
               }).catch(e => {
                 this.global.showToast("Error occured" + e, "error", true)
               })
@@ -506,6 +529,7 @@ export class SalestransactionComponent implements OnInit {
   }
 
   private getLatestItem() {
+    this.global.loader = true;
     this.global.getLatestSerial().subscribe(res => {
       if (res.docs.length > 0) {
         this.serials = res.docs[0].data() as SerialNumbersModel
@@ -624,23 +648,29 @@ export class SalestransactionComponent implements OnInit {
     return true
   }
 
-  public printBill() {
-    // this.global.loader = true
+  public printBill(update: boolean) {
+    this.global.loader = true
     this.billShow = true
-    // setTimeout(() => {
-    //   var data = document.getElementById('bill');
-    //   html2canvas(data).then(canvas => {
-    //     const contentDataURL = canvas.toDataURL('image/png')
-    //     let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
-    //     var position = 0;
-    //     pdf.addImage(contentDataURL, 'PNG', 0, 0)
-    //     let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
-    //     pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
-    //       this.billShow = false
-    //       this.updateSerials();
-    //     })
-    //   });
-    // }, 100);
+    setTimeout(() => {
+      var data = document.getElementById('bill');
+      html2canvas(data).then(canvas => {
+        const contentDataURL = canvas.toDataURL('image/png')
+        let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
+        var position = 0;
+        pdf.addImage(contentDataURL, 'PNG', 0, 0)
+        let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
+        pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
+          this.billShow = false
+          if (update) {
+            this.updateSerials();
+          } else {
+            this.resetSales();
+            this.global.loader = false
+            this.routerChange.navigate(['/transaction/sales'])
+          }
+        })
+      });
+    }, 100);
   }
 
 
@@ -650,19 +680,13 @@ export class SalestransactionComponent implements OnInit {
       .then(res => {
         this.service.deleteSalesDetail(this.salesDetails, this.salesHeader.id.toString())
           .then(res => {
-            this.service.updateItemDetails(this.getItemArray(false))
+            let amount = this.removeCustomerAmt()
+            this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
               .then(res => {
-                if (this.salesHeader.paymentType != 1) {
-                  let amount = this.removeCustomerAmt()
-                  this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
-                    .then(res => {
-                      this.global.showToast("Sales deleted successfully", "sucess", false)
-                    }).catch(e => {
-                      this.global.showToast("Error occured" + e, "error", true)
-                    })
-                } else {
-                  this.printBill()
-                }
+                this.global.loader = false
+                this.resetSales()
+                this.routerChange.navigate(['/transaction/sales'])
+                this.global.showToast("Sales deleted successfully", "success", false)
               }).catch(e => {
                 this.global.showToast("Error occured" + e, "error", true)
               })

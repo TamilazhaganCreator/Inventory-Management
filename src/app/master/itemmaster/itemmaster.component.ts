@@ -111,6 +111,14 @@ export class ItemmasterComponent implements OnInit {
     if (this.currentItem.removeStock) {
       this.currentItem.stock = this.currentItem.stock - this.currentItem.removeStock
     }
+    if (this.currentItem.lessPurchase) {
+      this.currentItem.purchase = this.currentItem.purchase - this.currentItem.lessPurchase
+      this.currentItem.stock = this.currentItem.stock - this.currentItem.lessPurchase
+    }
+    if (this.currentItem.lessSales) {
+      this.currentItem.sales = this.currentItem.sales - this.currentItem.lessSales
+      this.currentItem.stock = this.currentItem.stock + this.currentItem.lessSales
+    }
   }
 
 
@@ -118,11 +126,13 @@ export class ItemmasterComponent implements OnInit {
     if (this.currentItem.name != null && this.currentItem.cost != null && this.currentItem.name != '' &&
       this.currentItem.sp != null && this.currentItem.stock != null && this.currentItem.unitName != null &&
       this.currentItem.hsncode != null && this.currentItem.taxPercentage != null) {
-      if (this.currentItem.code == null) {
-        this.addItem()
-      } else {
-        this.setItemStock()
-        this.updateItem()
+      if (this.checkSp()) {
+        if (this.currentItem.code == null) {
+          this.addItem()
+        } else {
+          this.setItemStock()
+          this.updateItem()
+        }
       }
     } else {
       this.global.showToast("Kindly fill all the details", "warning", false)
@@ -148,11 +158,13 @@ export class ItemmasterComponent implements OnInit {
     // }
   }
 
-  checkSp() {
+  checkSp(): boolean {
     if (this.currentItem.sp < this.currentItem.cost) {
       this.spInput.nativeElement.focus();
       this.global.showToast("Selling price must be greater than or equal to cost", "warning", false)
+      return false
     }
+    return true
   }
 
   showTax() {

@@ -89,7 +89,7 @@ export class CustomermasterComponent implements OnInit {
         this.global.showToast("Enter a valid mobile no", "warning", false)
       }
     } else {
-      this.global.showToast("Kindly fill all the details", "warning", false)
+      this.global.showToast("Kindly fill all  the mandatory fields", "warning", false)
     }
   }
 
@@ -184,7 +184,6 @@ export class CustomermasterComponent implements OnInit {
       .then(res => {
         this.customer = new CustomerModel();
         this.global.loader = false
-
         this.global.showToast(this.masterName + " updated successfully", "success", false)
       }).catch(e => {
         this.global.loader = false
