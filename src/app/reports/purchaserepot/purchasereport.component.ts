@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 import { CustomerModel } from './../../master/master.model';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
-import { TransactionReportModel } from './../../transaction/transaction.model';
+import { PurchaseTransactionReportModel } from './../../transaction/transaction.model';
 import { GlobalService } from 'src/app/global.service';
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ReportService } from '../report.service';
@@ -19,8 +19,8 @@ export class PurchaseReportComponent implements OnInit {
 
   filterCollapsible = new EventEmitter<string | CollapsibleMaterializeAction>();
   private subscriptionArray: Subscription[] = []
-  purchaseHeader: TransactionReportModel[] = []
-  private backupPurchaseHeader: TransactionReportModel[] = []
+  purchaseHeader: PurchaseTransactionReportModel[] = []
+  private backupPurchaseHeader: PurchaseTransactionReportModel[] = []
   filter = new FilterModel()
   paidAmt = 0
   netAmt = 0
@@ -101,7 +101,7 @@ export class PurchaseReportComponent implements OnInit {
     private router: Router) {
     this.subscriptionArray[0] = this.lovService.getLovItem()
       .subscribe((res) => {
-        if (res[1] == "Customer") {
+        if (res[1] == "Supplier") {
           let cust = res[0] as CustomerModel;
           this.filter.customerName = cust.name
           this.filter.customerCode = cust.code
@@ -127,7 +127,7 @@ export class PurchaseReportComponent implements OnInit {
     this.backupPurchaseHeader = []
     this.service.getFullData("purchaseHeader", "timestamp").then((res) => {
       res.forEach((doc) => {
-        this.purchaseHeader[index] = doc.data() as TransactionReportModel
+        this.purchaseHeader[index] = doc.data() as PurchaseTransactionReportModel
         index++;
       })
       this.purchaseHeader.forEach((element) => {
@@ -153,7 +153,9 @@ export class PurchaseReportComponent implements OnInit {
 
   private removeValue(event) {
     event.target.value = null;
-    this.global.showToast("Kindly select the customer", "warning", false)
+    this.filter.customerCode = null
+    this.filter.customerName = null;
+    this.global.showToast("Kindly select the Supplier", "warning", false)
   }
 
   setDate(event, field) {
@@ -161,7 +163,7 @@ export class PurchaseReportComponent implements OnInit {
   }
 
   getCustomers() {
-    this.lovService.showLovModal(true, "Customer", "", null)
+    this.lovService.showLovModal(true, "Supplier", "", null)
   }
 
   applyFilter() {
@@ -184,7 +186,7 @@ export class PurchaseReportComponent implements OnInit {
     }
     if (this.filter.customerCode) {
       filtered = true
-      this.purchaseHeader = this.backupPurchaseHeader.filter(s => s.customerCode == this.filter.customerCode)
+      this.purchaseHeader = this.backupPurchaseHeader.filter(s => s.supplierCode == this.filter.customerCode)
     }
     if (this.filter.paymentType) {
       filtered = true

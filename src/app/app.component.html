@@ -27,7 +27,7 @@
       </div>
     </nav>
   </div>
-  <div style="height:90vh;overflow-y: auto;width: 100%"  *ngIf="loggedIn">
+  <div #routerArea style="height:90vh;overflow-y: auto;width: 100%"  *ngIf="loggedIn">
     <router-outlet></router-outlet>
   </div>
 </div>

@@ -103,7 +103,7 @@ export class SupplierreportComponent implements OnInit {
       filtered = true
     }
     if (this.filter.name) {
-      this.supplierDetails = this.backupSupplierDetails.filter(i => i.name.includes(this.filter.name))
+      this.supplierDetails = this.backupSupplierDetails.filter(i => i.name.toLowerCase().includes(this.filter.name))
       filtered = true
     }
     if (this.filter.sortType) {

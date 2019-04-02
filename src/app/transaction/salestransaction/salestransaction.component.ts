@@ -177,7 +177,8 @@ export class SalestransactionComponent implements OnInit {
   resetSales() {
     this.salesHeader.customerValid = false
     this.salesHeader = new SalesHeaderModel()
-    this.salesHeader.invoiceDate = new Date()
+    var dateArray = this.global.toLocaleDateString(new Date()).split("/")
+    this.salesHeader.invoiceDate = new Date(dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0] + " 00:00:00")
     this.salesHeader.timestamp = new Date().getTime()
     this.salesDetails = []
     this.addInitialItem();
@@ -280,16 +281,16 @@ export class SalestransactionComponent implements OnInit {
       if (this.salesDetails[index].quantity && this.salesDetails[index].sp) {
         this.salesDetails[index].totalUnit = this.salesDetails[index].quantity * this.salesDetails[index].unit
         let totalAmt = this.salesDetails[index].totalUnit * this.salesDetails[index].sp
-        this.salesDetails[index].cessAmt = totalAmt * ((this.salesDetails[index].cess_perc) / 100)
+        this.salesDetails[index].cessAmt = this.roundOff(totalAmt * ((this.salesDetails[index].cess_perc) / 100))
         if (this.salesHeader.customerLocation == 0) {
-          this.salesDetails[index].sgstAmt = totalAmt * ((this.salesDetails[index].cgst_perc) / 100)
-          this.salesDetails[index].cgstAmt = totalAmt * ((this.salesDetails[index].sgst_perc) / 100)
+          this.salesDetails[index].sgstAmt = this.roundOff(totalAmt * ((this.salesDetails[index].cgst_perc) / 100))
+          this.salesDetails[index].cgstAmt = this.roundOff(totalAmt * ((this.salesDetails[index].sgst_perc) / 100))
           this.salesDetails[index].igstAmt = 0
-          this.salesDetails[index].netAmt = totalAmt + this.salesDetails[index].sgstAmt + this.salesDetails[index].cgstAmt + this.salesDetails[index].cessAmt
+          this.salesDetails[index].netAmt = this.roundOff(totalAmt + this.salesDetails[index].sgstAmt + this.salesDetails[index].cgstAmt + this.salesDetails[index].cessAmt)
         } else if (this.salesHeader.customerLocation == 1) {
-          this.salesDetails[index].igstAmt = totalAmt * (this.salesDetails[index].taxPercentage / 100)
+          this.salesDetails[index].igstAmt = this.roundOff(totalAmt * (this.salesDetails[index].taxPercentage / 100))
           this.salesDetails[index].cgstAmt = this.salesDetails[index].sgstAmt = 0
-          this.salesDetails[index].netAmt = totalAmt + this.salesDetails[index].igstAmt + this.salesDetails[index].cessAmt
+          this.salesDetails[index].netAmt = this.roundOff(totalAmt + this.salesDetails[index].igstAmt + this.salesDetails[index].cessAmt)
         }
         this.salesHeaderCalculation();
       }
@@ -309,13 +310,13 @@ export class SalestransactionComponent implements OnInit {
       let cgst = this.salesDetails.filter(item => item.cgstAmt != null).map(item => item.cgstAmt).reduce((a, b) => a + b, 0)
       let sgst = this.salesDetails.filter(item => item.sgstAmt != null).map(item => item.sgstAmt).reduce((a, b) => a + b, 0)
       let cess = this.salesDetails.filter(item => item.cessAmt != null).map(item => item.cessAmt).reduce((a, b) => a + b, 0)
-      this.salesHeader.taxAmt = cgst + sgst + cess
+      this.salesHeader.taxAmt = this.roundOff(cgst + sgst + cess)
     } else if (this.salesHeader.customerLocation == 1) {
       let igst = this.salesDetails.filter(item => item.igstAmt != null).map(item => item.igstAmt).reduce((a, b) => a + b, 0)
       let cess = this.salesDetails.filter(item => item.cessAmt != null).map(item => item.cessAmt).reduce((a, b) => a + b, 0)
-      this.salesHeader.taxAmt = igst + cess
+      this.salesHeader.taxAmt = this.roundOff(igst + cess)
     }
-    this.salesHeader.netAmt = this.salesDetails.filter(item => item.netAmt != null).map(item => item.netAmt).reduce((a, b) => a + b, 0) + this.salesHeader.otherCharges
+    this.salesHeader.netAmt = this.roundOff(this.salesDetails.filter(item => item.netAmt != null).map(item => item.netAmt).reduce((a, b) => a + b, 0) + this.salesHeader.otherCharges)
   }
 
   clearCustomerDetails() {
@@ -367,10 +368,21 @@ export class SalestransactionComponent implements OnInit {
 
   checkNumberValue(event, fieldName) {
     if (this.global.numberOnlyFormatRegex.test(event.target.value)) {
-      if (event.target.value != '')
+      if (fieldName == 'otherCharges' && this.salesHeader.otherCharges) {
+        if (this.salesHeader.netAmt != null) {
+          this.salesHeader.netAmt = this.salesHeader.netAmt - this.salesHeader.otherCharges
+        }
+      }
+      if (event.target.value != '') {
         this.salesHeader[fieldName] = +(event.target.value)
-      else
+        if (fieldName == 'otherCharges' && this.salesHeader.otherCharges) {
+          if (this.salesHeader.netAmt != null) {
+            this.salesHeader.netAmt = this.roundOff(this.salesHeader.netAmt + this.salesHeader.otherCharges)
+          }
+        }
+      } else {
         this.salesHeader[fieldName] = null
+      }
     } else {
       event.target.value = this.salesHeader[fieldName] ? this.salesHeader[fieldName] : ''
     }
@@ -416,8 +428,15 @@ export class SalestransactionComponent implements OnInit {
     this.global.loader = true
     this.resetSales()
     this.global.loader = false
-    this.routerChange.navigate(['/transaction/sales'])
+    if (this.salesHeader.id) {
+      this.routerChange.navigate(['/transaction/sales'])
+      window.location.reload();
+    }
     this.global.showToast("Cleared Successfully", "warning", false)
+  }
+
+  roundOff(value): number {
+    return Math.round(value * Math.pow(10, 2)) / (Math.pow(10, 2));
   }
 
   setBankName(event) {
@@ -491,8 +510,8 @@ export class SalestransactionComponent implements OnInit {
     } else if (this.confimationModalHeader == "Submit") {
       this.submitToServer()
     } else if (this.confimationModalHeader == "Delete") {
-      let pwd = this.salesHeader.id + this.salesHeader.netAmt + new Date().getDate()
-      if (this.deletePwd == pwd.toString()) {
+      let pwd = this.salesHeader.id.toString() + this.salesHeader.netAmt.toString() + new Date().getDate().toString()
+      if (this.deletePwd == pwd) {
         this.delete()
       } else {
         this.global.showToast("Invalid password", "warning", false)
@@ -666,7 +685,7 @@ export class SalestransactionComponent implements OnInit {
           } else {
             this.resetSales();
             this.global.loader = false
-            this.routerChange.navigate(['/transaction/sales'])
+            this.routerChange.navigate(['/'])
           }
         })
       });

@@ -36,6 +36,21 @@ export class TransactionReportModel {
     paymentTypeString: String;
 }
 
+export class PurchaseTransactionReportModel {
+    id: number = null;
+    supplierCode: number = null;
+    supplierName: string = null;
+    customerAmt: number = null;
+    invoiceNo: string;
+    paymentType: number;
+    netAmt: number;
+    timestamp: number;
+    paidAmt: number =null;
+    invoiceDateString: String;
+    paymentTypeString: String;
+}
+
+
 export class SalesDetailModel {
     id: number = null;
     itemName: string = null;

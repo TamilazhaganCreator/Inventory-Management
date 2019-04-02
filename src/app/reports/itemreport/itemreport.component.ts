@@ -1,12 +1,11 @@
-import { ArrayDescSortPipe } from './../../utils/sortdesc.pipe';
-import { ArrayAscSortPipe } from './../../utils/sortasc.pipe';
-import { FilterModel } from './../report.model';
-import { ReportService } from './../report.service';
-import { GlobalService } from 'src/app/global.service';
 import { Component, OnInit } from '@angular/core';
-import { ItemModel } from 'src/app/master/master.model';
 import { HotTableRegisterer } from '@handsontable/angular';
+import { GlobalService } from 'src/app/global.service';
+import { ItemModel } from 'src/app/master/master.model';
 import { ItemFilterModel } from '../report.model';
+import { ArrayAscSortPipe } from './../../utils/sortasc.pipe';
+import { ArrayDescSortPipe } from './../../utils/sortdesc.pipe';
+import { ReportService } from './../report.service';
 
 @Component({
   selector: 'app-itemreport',
@@ -100,7 +99,7 @@ export class ItemreportComponent implements OnInit {
       filtered = true
     }
     if (this.filter.name) {
-      this.itemDetails = this.backupItemDetails.filter(i => i.name.includes(this.filter.name))
+      this.itemDetails = this.backupItemDetails.filter(i => i.name.toLowerCase().includes(this.filter.name))
       filtered = true
     }
     if (this.filter.sortType) {

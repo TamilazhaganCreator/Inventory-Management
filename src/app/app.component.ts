@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { AuthService } from './auth.service';
 import { GlobalService } from './global.service';
@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
   masterComponents = ["customer", "item", "supplier", "tax", "unit"]
   transactionComponents = ["sales", "purchase"]
   reportComponents = ["sales", "purchase", "items", "customer", "supplier"]
+  @ViewChild("routerArea") routerArea: ElementRef;
 
   constructor(public global: GlobalService, private router: Router, private auth: AuthService) {
     this.router.events.forEach((event) => {
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
         this.global.routeLoader = true
       } else if (event instanceof NavigationEnd) {
         this.global.routeLoader = false
+        this.routerArea.nativeElement.click();
       }
     })
   }

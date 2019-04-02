@@ -1,6 +1,5 @@
-import { MasterService } from './../../master/master.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, EventEmitter, QueryList, ViewChild, ViewChildren, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterializeAction } from 'angular2-materialize';
 import * as html2canvas from 'html2canvas';
@@ -12,6 +11,7 @@ import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model'
 import { SerialNumbersModel } from '../../global.model';
 import { PurchaseDetailModel, PurchaseHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
+import { MasterService } from './../../master/master.service';
 
 @Component({
   selector: 'app-purchase',
@@ -66,6 +66,7 @@ export class PurchaseComponent implements OnInit {
   confirmationModal = new EventEmitter<string | MaterializeAction>();
   private serials = new SerialNumbersModel()
   private latestId = 0
+  deletePwd = ""
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
   @ViewChild("clearChqButton") private clearChqButton: ElementRef;
@@ -159,6 +160,12 @@ export class PurchaseComponent implements OnInit {
       });
   }
 
+  showChq() {
+    if (this.purchaseHeader.paymentType == 2) {
+      this.openChqModal()
+    }
+  }
+
   ngOnInit() {
     setTimeout(() => {
       this.global.loader = true;
@@ -169,7 +176,8 @@ export class PurchaseComponent implements OnInit {
   resetSales() {
     this.purchaseHeader.supplierValid = false
     this.purchaseHeader = new PurchaseHeaderModel()
-    this.purchaseHeader.invoiceDate = new Date()
+    var dateArray = this.global.toLocaleDateString(new Date()).split("/")
+    this.purchaseHeader.invoiceDate = new Date(dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0] + " 00:00:00")
     this.purchaseHeader.timestamp = new Date().getTime()
     this.purchaseDetails = []
     this.addInitialItem();
@@ -303,16 +311,16 @@ export class PurchaseComponent implements OnInit {
       if (this.purchaseDetails[index].quantity && this.purchaseDetails[index].sp) {
         this.purchaseDetails[index].totalUnit = this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit
         let totalAmt = this.purchaseDetails[index].totalUnit * this.purchaseDetails[index].sp
-        this.purchaseDetails[index].cessAmt = totalAmt * ((this.purchaseDetails[index].cess_perc) / 100)
+        this.purchaseDetails[index].cessAmt = this.roundOff(totalAmt * ((this.purchaseDetails[index].cess_perc) / 100))
         if (this.purchaseHeader.supplierLocation == 0) {
-          this.purchaseDetails[index].sgstAmt = totalAmt * ((this.purchaseDetails[index].cgst_perc) / 100)
-          this.purchaseDetails[index].cgstAmt = totalAmt * ((this.purchaseDetails[index].sgst_perc) / 100)
+          this.purchaseDetails[index].sgstAmt = this.roundOff(totalAmt * ((this.purchaseDetails[index].cgst_perc) / 100))
+          this.purchaseDetails[index].cgstAmt = this.roundOff(totalAmt * ((this.purchaseDetails[index].sgst_perc) / 100))
           this.purchaseDetails[index].igstAmt = 0
-          this.purchaseDetails[index].netAmt = totalAmt + this.purchaseDetails[index].sgstAmt + this.purchaseDetails[index].cgstAmt + this.purchaseDetails[index].cessAmt
+          this.purchaseDetails[index].netAmt = this.roundOff(totalAmt + this.purchaseDetails[index].sgstAmt + this.purchaseDetails[index].cgstAmt + this.purchaseDetails[index].cessAmt)
         } else if (this.purchaseHeader.supplierLocation == 1) {
-          this.purchaseDetails[index].igstAmt = totalAmt * (this.purchaseDetails[index].taxPercentage / 100)
+          this.purchaseDetails[index].igstAmt = this.roundOff(totalAmt * (this.purchaseDetails[index].taxPercentage / 100))
           this.purchaseDetails[index].cgstAmt = this.purchaseDetails[index].sgstAmt = 0
-          this.purchaseDetails[index].netAmt = totalAmt + this.purchaseDetails[index].igstAmt + this.purchaseDetails[index].cessAmt
+          this.purchaseDetails[index].netAmt = this.roundOff(totalAmt + this.purchaseDetails[index].igstAmt + this.purchaseDetails[index].cessAmt)
         }
         this.purchaseHeaderCalculation();
       }
@@ -325,20 +333,23 @@ export class PurchaseComponent implements OnInit {
     this.purchaseHeader.timestamp = this.purchaseHeader.invoiceDate.getTime()
   }
 
-
-
   purchaseHeaderCalculation() {
     if (this.purchaseHeader.supplierLocation == 0) {
       let cgst = this.purchaseDetails.filter(item => item.cgstAmt != null).map(item => item.cgstAmt).reduce((a, b) => a + b, 0)
       let sgst = this.purchaseDetails.filter(item => item.sgstAmt != null).map(item => item.sgstAmt).reduce((a, b) => a + b, 0)
       let cess = this.purchaseDetails.filter(item => item.cessAmt != null).map(item => item.cessAmt).reduce((a, b) => a + b, 0)
-      this.purchaseHeader.taxAmt = cgst + sgst + cess
+      this.purchaseHeader.taxAmt = this.roundOff(cgst + sgst + cess)
+
     } else if (this.purchaseHeader.supplierLocation == 1) {
       let igst = this.purchaseDetails.filter(item => item.igstAmt != null).map(item => item.igstAmt).reduce((a, b) => a + b, 0)
       let cess = this.purchaseDetails.filter(item => item.cessAmt != null).map(item => item.cessAmt).reduce((a, b) => a + b, 0)
-      this.purchaseHeader.taxAmt = igst + cess
+      this.purchaseHeader.taxAmt = this.roundOff(igst + cess)
     }
-    this.purchaseHeader.netAmt = this.purchaseDetails.filter(item => item.netAmt != null).map(item => item.netAmt).reduce((a, b) => a + b, 0)
+    this.purchaseHeader.netAmt = this.roundOff(this.purchaseDetails.filter(item => item.netAmt != null).map(item => item.netAmt).reduce((a, b) => a + b, 0))
+  }
+
+  roundOff(value): number {
+    return Math.round(value * Math.pow(10, 2)) / (Math.pow(10, 2));
   }
 
   clearSupplierDetails() {
@@ -387,10 +398,17 @@ export class PurchaseComponent implements OnInit {
 
   checkNumberValue(event, fieldName) {
     if (this.global.numberOnlyFormatRegex.test(event.target.value)) {
-      if (event.target.value != '')
+      if(fieldName == 'otherCharges' && this.purchaseHeader.otherCharges){
+        this.purchaseHeader.netAmt = this.purchaseHeader.netAmt - this.purchaseHeader.otherCharges
+      }
+      if (event.target.value != '') {
         this.purchaseHeader[fieldName] = +(event.target.value)
-      else
+        if(fieldName == 'otherCharges' && this.purchaseHeader.otherCharges){
+          this.purchaseHeader.netAmt = this.purchaseHeader.netAmt + this.purchaseHeader.otherCharges
+        }
+      } else {
         this.purchaseHeader[fieldName] = null
+      }
     } else {
       event.target.value = this.purchaseHeader[fieldName] ? this.purchaseHeader[fieldName] : ''
     }
@@ -432,7 +450,7 @@ export class PurchaseComponent implements OnInit {
 
   endProcess() {
     if (this.purchaseHeader.id) {
-      this.printBill()
+      this.printBill(false)
     } else {
       this.submitProcess()
     }
@@ -442,8 +460,10 @@ export class PurchaseComponent implements OnInit {
     this.global.loader = true
     this.resetSales()
     this.global.loader = false
-    this.routerChange.navigate(['/transaction/purchase'])
     this.global.showToast("Cleared Successfully", "warning", false)
+    if (this.purchaseHeader.id) {
+      this.routerChange.navigate(['/'])
+    }
   }
 
   setBankName(event) {
@@ -455,6 +475,10 @@ export class PurchaseComponent implements OnInit {
     this.openSubmitModal()
   }
 
+  deleteModal() {
+    this.confimationModalHeader = "Delete"
+    this.openSubmitModal()
+  }
 
   submitProcess() {
     if (this.purchaseHeader.supplierValid) {
@@ -505,6 +529,13 @@ export class PurchaseComponent implements OnInit {
       this.clearAll()
     } else if (this.confimationModalHeader == "Submit") {
       this.submitToServer()
+    } else if (this.confimationModalHeader == "Delete") {
+      let pwd = this.purchaseHeader.id.toString() + this.purchaseHeader.netAmt.toString() + new Date().getDate().toString()
+      if (this.deletePwd == pwd) {
+        this.delete()
+      } else {
+        this.global.showToast("Invalid password", "warning", false)
+      }
     }
   }
 
@@ -521,7 +552,7 @@ export class PurchaseComponent implements OnInit {
                 let amount = this.getsupplierAmt()
                 this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
                   .then(res => {
-                    this.printBill();
+                    this.printBill(true);
                   }).catch(e => {
                     this.global.showToast("Error occured" + e, "error", true)
                   })
@@ -654,7 +685,7 @@ export class PurchaseComponent implements OnInit {
     }
   }
 
-  public printBill() {
+  public printBill(update: boolean) {
     this.global.loader = true
     this.billShow = true
     setTimeout(() => {
@@ -667,7 +698,13 @@ export class PurchaseComponent implements OnInit {
         let date = this.purchaseHeader.invoiceDate.getDate() + "/" + (this.purchaseHeader.invoiceDate.getMonth() + 1) + "/" + this.purchaseHeader.invoiceDate.getFullYear()
         pdf.save("PURCHASE - " + this.purchaseHeader.supplierName + "- Invoice_No_" + this.purchaseHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false
-          this.updateSerials();
+          if (update) {
+            this.updateSerials();
+          } else {
+            this.resetSales()
+            this.global.loader = false
+            this.routerChange.navigate(['/'])
+          }
         })
       });
     }, 100);

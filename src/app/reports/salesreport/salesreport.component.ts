@@ -148,6 +148,8 @@ export class SalesReportComponent implements OnInit {
 
   private removeValue(event) {
     event.target.value = null;
+    this.filter.customerCode = null
+    this.filter.customerName = null;
     this.global.showToast("Kindly select the customer", "warning", false)
   }
 
