@@ -229,8 +229,8 @@ export class PurchaseComponent implements OnInit {
               .then(res => {
                 this.global.loader = false
                 this.resetSales()
-                this.routerChange.navigate(['/transaction/sales'])
                 this.global.showToast("Purchase deleted successfully", "sucess", false)
+                this.routerChange.navigate(['/'])
               }).catch(e => {
                 this.global.showToast("Error occured" + e, "error", true)
               })
@@ -457,13 +457,14 @@ export class PurchaseComponent implements OnInit {
   }
 
   clearAll() {
+    if (this.purchaseHeader.id) {
+      this.global.showToast("Cleared Successfully", "warning", false)
+      this.routerChange.navigate(['/'])
+    }
     this.global.loader = true
     this.resetSales()
     this.global.loader = false
     this.global.showToast("Cleared Successfully", "warning", false)
-    if (this.purchaseHeader.id) {
-      this.routerChange.navigate(['/'])
-    }
   }
 
   setBankName(event) {

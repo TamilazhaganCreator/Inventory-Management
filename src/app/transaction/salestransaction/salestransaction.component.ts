@@ -425,13 +425,13 @@ export class SalestransactionComponent implements OnInit {
   }
 
   clearAll() {
+    if (this.salesHeader.id) {
+      this.global.showToast("Cleared Successfully", "warning", false)
+      this.routerChange.navigate(['/'])
+    }
     this.global.loader = true
     this.resetSales()
     this.global.loader = false
-    if (this.salesHeader.id) {
-      this.routerChange.navigate(['/transaction/sales'])
-      window.location.reload();
-    }
     this.global.showToast("Cleared Successfully", "warning", false)
   }
 
@@ -704,7 +704,7 @@ export class SalestransactionComponent implements OnInit {
               .then(res => {
                 this.global.loader = false
                 this.resetSales()
-                this.routerChange.navigate(['/transaction/sales'])
+                this.routerChange.navigate(['/'])
                 this.global.showToast("Sales deleted successfully", "success", false)
               }).catch(e => {
                 this.global.showToast("Error occured" + e, "error", true)

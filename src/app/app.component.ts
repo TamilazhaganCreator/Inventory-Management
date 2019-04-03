@@ -26,7 +26,9 @@ export class AppComponent implements OnInit {
         this.global.routeLoader = true
       } else if (event instanceof NavigationEnd) {
         this.global.routeLoader = false
-        this.routerArea.nativeElement.click();
+        if (this.routerArea && this.routerArea.nativeElement) {
+          this.routerArea.nativeElement.click();
+        }
       }
     })
   }

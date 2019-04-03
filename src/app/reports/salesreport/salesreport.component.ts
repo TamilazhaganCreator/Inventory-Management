@@ -146,7 +146,7 @@ export class SalesReportComponent implements OnInit {
     })
   }
 
-  private removeValue(event) {
+  removeValue(event) {
     event.target.value = null;
     this.filter.customerCode = null
     this.filter.customerName = null;

@@ -151,7 +151,7 @@ export class PurchaseReportComponent implements OnInit {
     this.netAmt = this.purchaseHeader.map(s => s.netAmt).reduce((a, b) => a + b, 0)
   }
 
-  private removeValue(event) {
+  removeValue(event) {
     event.target.value = null;
     this.filter.customerCode = null
     this.filter.customerName = null;
