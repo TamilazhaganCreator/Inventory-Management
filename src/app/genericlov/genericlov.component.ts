@@ -66,8 +66,8 @@ export class GenericLovComponent {
             this.lovDetailsObject.header = this.lovType + "s"
             this.lovDetailsObject.lov_header = ["Code", "Name"]
             this.lovDetailsObject.table_content = ["code", "name"]
-            this.lovDetailsObject.header_width = [40, 60]
-            this.lovDetailsObject.table_content_width = [40, 60]
+            this.lovDetailsObject.header_width = [20, 80]
+            this.lovDetailsObject.table_content_width = [20, 80]
             let collection = this.lovType.toLowerCase() + "master"
             this.getItem(collection, "name")
         }
