@@ -1,3 +1,4 @@
+import { UnitModel } from './../master/master.model';
 import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { toast } from 'angular2-materialize';
 import { Subscription } from 'rxjs';
@@ -57,7 +58,7 @@ export class GenericLovComponent {
             this.getItem("taxmaster", "igst_perc")
         } else if (this.lovType == "units") {
             this.lovDetailsObject.header = "Units"
-            this.lovDetailsObject.lov_header = ["Name", "Type", "Unit", "CESS"]
+            this.lovDetailsObject.lov_header = ["Name", "Type", "Unit"]
             this.lovDetailsObject.table_content_width = this.lovDetailsObject.header_width = [40, 30, 30]
             this.lovDetailsObject.table_content = ["name", "type", "unit"]
             this.getItem("unitmaster", "name")
@@ -120,6 +121,9 @@ export class GenericLovComponent {
                     } else if (this.lovType == "tax") {
                         this.allItems[index] = new TaxModel()
                         this.allItems[index] = doc.data() as TaxModel
+                    }else if (this.lovType == "units") {
+                        this.allItems[index] = new UnitModel()
+                        this.allItems[index] = doc.data() as UnitModel
                     } else {
                         this.allItems[index] = new CustomerModel()
                         this.allItems[index] = doc.data() as CustomerModel

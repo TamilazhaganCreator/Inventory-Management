@@ -112,10 +112,10 @@
             HSNCODE
           </div>
           <div class="col s4">
-            Tax %
+            TAX %
           </div>
           <div class="col s4">
-            UNIT
+            PACKING
           </div>
         </div>
         <div class="col s1">
@@ -164,7 +164,7 @@
                 (keypress)="addRow($event)" [readOnly]="purchaseHeader.id">
             </div>
             <div class="col s4">
-              <input autocomplete="off" type="text" readonly class="input-design" [value]="item.unit?item.unit:''">
+              <input autocomplete="off" (input)="getUnitList($event,rowIndex)" [readOnly]="!purchaseHeader.supplierValid || !item.itemName || purchaseHeader.id" type="text" class="input-design" [value]="item.unitName?item.unitName:''">
             </div>
           </div>
           <div class="col s1">
