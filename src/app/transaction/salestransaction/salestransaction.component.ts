@@ -518,7 +518,7 @@ export class SalestransactionComponent implements OnInit {
     event.target.value = null;
     this.salesDetails[rowIndex].unit = 1;
     this.salesDetails[rowIndex].unitType = "KG";
-    this.salesDetails[rowIndex].unitName = "UNIT - 1";
+    this.salesDetails[rowIndex].unitName = "UNIT-1";
     this.salesDetailsCalculation(rowIndex);
     this.lovService.showLovModal(true, "units", "", rowIndex)
   }
