@@ -121,7 +121,7 @@ export class GenericLovComponent {
                     } else if (this.lovType == "tax") {
                         this.allItems[index] = new TaxModel()
                         this.allItems[index] = doc.data() as TaxModel
-                    }else if (this.lovType == "units") {
+                    } else if (this.lovType == "units") {
                         this.allItems[index] = new UnitModel()
                         this.allItems[index] = doc.data() as UnitModel
                     } else {
@@ -193,6 +193,8 @@ export class GenericLovComponent {
             this.allItems = new SearchPipe().transform(this.allItems, "name", "code", this.searchWord)
         } else if (this.lovDetailsObject.table_content.includes("cgst_perc")) {
             this.allItems = new SearchPipe().transform(this.allItems, "cgst_perc", "igst_perc", this.searchWord)
+        } else if (this.lovDetailsObject.table_content.includes("unit")) {
+            this.allItems = new SearchPipe().transform(this.allItems, "name", "unit", this.searchWord)
         }
     }
 
