@@ -79,8 +79,6 @@ export class TransactionService {
         itemCode: sale.itemCode,
         hsncode: sale.hsncode,
         quantity: sale.quantity,
-        unitName: sale.unitName,
-        unitType: sale.unitType,
         unit: sale.unit,
         totalUnit: sale.totalUnit,
         sp: sale.sp,
@@ -128,8 +126,6 @@ export class TransactionService {
         itemCode: purchase.itemCode,
         hsncode: purchase.hsncode,
         quantity: purchase.quantity,
-        unitName: purchase.unitName,
-        unitType: purchase.unitType,
         unit: purchase.unit,
         totalUnit: purchase.totalUnit,
         sp: purchase.sp,
@@ -172,10 +168,8 @@ export class TransactionService {
       docs[index] = this.db.collection("itemmaster").doc(item.code.toString()).ref;
       batch.update(docs[index], {
         "unit": item.unit,
-        "unitName": item.unitName,
         "hsncode": item.hsncode,
         "taxPercentage": item.taxPercentage,
-        "unitType": item.unitType,
         "stock": item.stock,
         "cgst_perc": item.cgst_perc,
         "sgst_perc": item.sgst_perc,

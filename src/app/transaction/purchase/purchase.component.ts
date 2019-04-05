@@ -70,6 +70,7 @@ export class PurchaseComponent implements OnInit {
   deletePwd = ""
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
+  @ViewChildren("unitInputs") private unitInputs: QueryList<any>;
   @ViewChild("clearChqButton") private clearChqButton: ElementRef;
   @ViewChild("saveChqButton") private saveChqButton: ElementRef;
   @ViewChild("invoiceNoInput") private invoiceNoInput: ElementRef;
@@ -95,8 +96,6 @@ export class PurchaseComponent implements OnInit {
           this.purchaseDetails[res[2]].sgst_perc = item.sgst_perc
           this.purchaseDetails[res[2]].igst_perc = item.igst_perc
           this.purchaseDetails[res[2]].cess_perc = item.cess_perc
-          this.purchaseDetails[res[2]].unitType = item.unitType
-          this.purchaseDetails[res[2]].unitName = item.unitName
           this.purchaseDetails[res[2]].stockValue = item.stock
           this.purchaseDetails[res[2]].sales = item.sales
           this.purchaseDetails[res[2]].purchase = item.purchase
@@ -124,8 +123,6 @@ export class PurchaseComponent implements OnInit {
         } else if (res[1] == "units") {
           let unit = res[0] as UnitModel
           this.purchaseDetails[res[2]].unit = unit.unit
-          this.purchaseDetails[res[2]].unitName = unit.name
-          this.purchaseDetails[res[2]].unitType = unit.type
           this.purchaseDetailsCalculation(res[2])
         }
       })
@@ -291,7 +288,7 @@ export class PurchaseComponent implements OnInit {
   addItem() {
     let index = this.purchaseDetails.length - 1
     if (this.purchaseDetails[index].itemName) {
-      if (this.checkRowValid(index, this.purchaseDetails[index].quantity, "quantityInputs") && this.checkRowValid(index, this.purchaseDetails[index].sp, "spInputs")) {
+      if (this.checkRowValid(index, this.purchaseDetails[index].quantity, "quantityInputs") && this.checkRowValid(index, this.purchaseDetails[index].sp, "spInputs") && this.checkRowValid(index, this.purchaseDetails[index].unit, "unitInputs")) {
         this.purchaseDetails.push(new PurchaseDetailModel())
         this.setElementFocus(this.itemCodeInputs, this.purchaseDetails.length - 1);
       }
@@ -404,8 +401,6 @@ export class PurchaseComponent implements OnInit {
   getUnitList(event, rowIndex) {
     event.target.value = null;
     this.purchaseDetails[rowIndex].unit = 1;
-    this.purchaseDetails[rowIndex].unitType = "KG";
-    this.purchaseDetails[rowIndex].unitName = "UNIT-1";
     this.purchaseDetailsCalculation(rowIndex);
     this.lovService.showLovModal(true, "units", "", rowIndex)
   }
@@ -639,8 +634,6 @@ export class PurchaseComponent implements OnInit {
       items[index] = new ItemModel()
       items[index].code = this.purchaseDetails[index].itemCode
       items[index].unit = this.purchaseDetails[index].unit
-      items[index].unitName = this.purchaseDetails[index].unitName
-      items[index].unitType = this.purchaseDetails[index].unitType
       if (add) {
         items[index].stock = this.purchaseDetails[index].stockValue + (this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit)
         items[index].purchase = this.purchaseDetails[index].purchase + (this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit)
@@ -675,7 +668,7 @@ export class PurchaseComponent implements OnInit {
 
   fullItemsValid(): boolean {
     for (let index = 0; index < this.purchaseDetails.length; index++) {
-      if (!this.checkRowValid(index, this.purchaseDetails[index].quantity, "quantityInputs") || !this.checkRowValid(index, this.purchaseDetails[index].sp, "spInputs")) {
+      if (!this.checkRowValid(index, this.purchaseDetails[index].quantity, "quantityInputs") || !this.checkRowValid(index, this.purchaseDetails[index].sp, "spInputs") || !this.checkRowValid(index, this.purchaseDetails[index].unit, "unitInputs")) {
         return false
       }
     }

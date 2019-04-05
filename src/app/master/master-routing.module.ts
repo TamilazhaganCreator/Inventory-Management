@@ -8,7 +8,7 @@ import { UnitmasterComponent } from './unitmaster/unitmaster.component';
 
 const routes: Routes = [
     { path: '', component: CustomermasterComponent },
-    { path: 'unit', component: UnitmasterComponent },
+    // { path: 'unit', component: UnitmasterComponent },
     { path: 'item', component: ItemmasterComponent },
     { path: 'customer', component: CustomermasterComponent },
     { path: 'supplier', component: CustomermasterComponent },
