@@ -334,8 +334,9 @@
         </div>
       </div>
       <div class="col s5 left-align bill-dtl left-bdr">
-        <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
+        <div class="col s12 nopad bill-item-dtl" style="text-transform: uppercase" *ngFor="let item of purchaseDetails;let _index = index">
           {{item.itemName}}
+          <br>( {{item.quantity}} X {{item.unit}} {{item.unitType}} )
         </div>
       </div>
       <div class="col s2 bill-dtl left-bdr">
