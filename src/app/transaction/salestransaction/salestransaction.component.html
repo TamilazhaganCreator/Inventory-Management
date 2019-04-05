@@ -162,7 +162,7 @@
                 (input)="removeTax(rowIndex)" class="input-design" maxlength="1" [value]="item.taxPercentage">
             </div>
             <div class="col s4">
-              <input autocomplete="off" (input)="getUnitList($event,rowIndex)" [readOnly]="!salesHeader.customerValid || !item.itemName || salesHeader.id" type="text" class="input-design" [value]="item.unitName?item.unitName:''">
+              <input #unitInputs autocomplete="off" (input)="checkField(rowIndex,$event,'numberwith2DecimalRegex','unit')" [readOnly]="!salesHeader.customerValid || !item.itemName || salesHeader.id" type="text" class="input-design" [value]="item.unit?item.unit:''">
             </div>
           </div>
           <div class="col s1">
@@ -337,7 +337,7 @@
       <div class="col s5 left-align bill-dtl left-bdr">
         <div class="col s12 nopad bill-item-dtl" style="text-transform:uppercase" *ngFor="let item of salesDetails;let _index = index">
           {{item.itemName}}
-          <br>( {{item.quantity}} X {{item.unit}} {{item.unitType}} )
+          <br>( {{item.quantity}} X {{item.unit}} )
         </div>
       </div>
       <div class="col s2 bill-dtl left-bdr">

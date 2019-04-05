@@ -19,21 +19,21 @@
         <label for="sp" [ngClass]="{'actives': (currentItem.sp != null)}">Selling Price</label>
       </div>
     </div>
-    <div class="input-field col s6 ">
+    <div class="input-field col s4">
       <input id="hsncode" tabindex="4" type="text" maxlength="8" [(ngModel)]="currentItem.hsncode">
       <label for="hsncode" [ngClass]="{'actives': (currentItem.hsncode != null)}">HSN Code</label>
     </div>
-    <div class="input-field col s6 ">
+    <!-- <div class="input-field col s6 ">
       <input readonly id="unitName" tabindex="5" type="text" [value]="currentItem.unitName ? currentItem.unitName : ''"
         (keydown.enter)="showLovModal($event,'unit')" (input)="removeTypedValue($event,'unit')">
       <label for="unitName" [ngClass]="{'actives': (currentItem.unitName != null)}">Packing</label>
-    </div>
-    <div class="input-field col s6">
+    </div> -->
+    <div class="input-field col s4">
       <input #taxInput id="tax" type="text" [value]="currentItem.taxPercentage" tabindex="6" (keydown.enter)="showTax()"
         (input)="removeTypedValue($event,'tax')">
       <label for="tax" [ngClass]="{'actives': currentItem.taxPercentage != null}">Tax Percentage</label>
     </div>
-    <div class="input-field col s6">
+    <div class="input-field col s4">
       <input #stockInput id="stock" type="text" tabindex="7" [value]="currentItem.stock ? currentItem.stock : ''"
         (input)="checkNumberOnly($event,'stock')">
       <label for="stock" [ngClass]="{'actives': (currentItem.stock != null)}">Stock</label>

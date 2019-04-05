@@ -57,8 +57,6 @@ export class SalesDetailModel {
     itemCode: number = null;
     hsncode: string = '';
     quantity: number = null;
-    unitName: string = '';
-    unitType: string
     unit: number;
     totalUnit: number;
     sp: number = null;
@@ -106,8 +104,6 @@ export class PurchaseDetailModel {
     itemCode: number = null;
     hsncode: string = '';
     quantity: number = null;
-    unitName: string = '';
-    unitType: string
     unit: number;
     totalUnit: number;
     sp: number = null;
