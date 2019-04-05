@@ -405,7 +405,7 @@ export class PurchaseComponent implements OnInit {
     event.target.value = null;
     this.purchaseDetails[rowIndex].unit = 1;
     this.purchaseDetails[rowIndex].unitType = "KG";
-    this.purchaseDetails[rowIndex].unitName = "UNIT - 1";
+    this.purchaseDetails[rowIndex].unitName = "UNIT-1";
     this.purchaseDetailsCalculation(rowIndex);
     this.lovService.showLovModal(true, "units", "", rowIndex)
   }
