@@ -22,8 +22,6 @@ export class ItemModel {
     hsncode: string;
     sp: number;
     cost: number;
-    unitName: string;
-    unitType: string;
     unit: number;
     stock: number;
     sales: number;

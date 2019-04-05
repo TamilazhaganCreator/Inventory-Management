@@ -31,12 +31,11 @@ export class ItemmasterComponent implements OnInit {
         if (res[1] == "items") {
           this.currentItem = res[0]
           this.currentItem.removeStock = this.currentItem.addStock = 0
-        } else if (res[1] == "unit") {
-          let unit = res[0] as UnitModel
-          this.currentItem.unit = unit.unit
-          this.currentItem.unitName = unit.name
-          this.currentItem.unitType = unit.type
-          this.taxInput.nativeElement.focus()
+          // } else if (res[1] == "unit") {
+          //   let unit = res[0] as UnitModel
+          //   this.currentItem.unit = unit.unit
+          //   this.taxInput.nativeElement.focus()
+          // }
         } else if (res[1] == "tax") {
           let tax = res[0] as TaxModel
           this.currentItem.taxPercentage = tax.cess_perc + tax.cgst_perc + tax.sgst_perc
@@ -56,8 +55,6 @@ export class ItemmasterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentItem.unitName = "UNIT-1"
-    this.currentItem.unitType = "KG"
     this.currentItem.unit = 1
     setTimeout(() => {
       this.global.loader = true
@@ -127,8 +124,8 @@ export class ItemmasterComponent implements OnInit {
 
   saveItem() {
     if (this.currentItem.name != null && this.currentItem.cost != null && this.currentItem.name != '' &&
-      this.currentItem.sp != null && this.currentItem.stock != null && this.currentItem.unitName != null &&
-      this.currentItem.hsncode != null && this.currentItem.taxPercentage != null) {
+      this.currentItem.sp != null && this.currentItem.stock != null && this.currentItem.unit != null &&
+      this.currentItem.unit != 0 && this.currentItem.hsncode != null && this.currentItem.taxPercentage != null) {
       if (this.checkSp()) {
         if (this.currentItem.code == null) {
           this.addItem()
@@ -145,8 +142,6 @@ export class ItemmasterComponent implements OnInit {
   clearItem() {
     this.currentItem = new ItemModel()
     this.currentItem.unit = 1
-    this.currentItem.unitType = "KG"
-    this.currentItem.unitName = "UNIT-1"
     this.global.showToast("Reset successfully", "warning", false)
     // if (this.currentItem.code == null) {
     //   this.currentItem = new ItemModel()
@@ -206,8 +201,6 @@ export class ItemmasterComponent implements OnInit {
     this.global.updateLatestSerial(this.serials)
       .then(res => {
         this.currentItem = new ItemModel();
-        this.currentItem.unitName = "UNIT-1"
-        this.currentItem.unitType = "KG"
         this.currentItem.unit = 1
         this.latestId++;
         this.global.loader = false

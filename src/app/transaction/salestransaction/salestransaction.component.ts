@@ -7,7 +7,7 @@ import * as jspdf from 'jspdf';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
-import { CustomerModel, ItemModel, TaxModel, UnitModel } from 'src/app/master/master.model';
+import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model';
 import { SalesDetailModel, SalesHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
 import { SerialNumbersModel } from './../../global.model';
@@ -69,6 +69,7 @@ export class SalestransactionComponent implements OnInit {
   deletePwd = ""
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
+  @ViewChildren("unitInputs") private unitInputs: QueryList<any>;
   @ViewChildren("spInputs") private spInputs: QueryList<any>;
   @ViewChild("clearChqButton") private clearChqButton: ElementRef;
   @ViewChild("saveChqButton") private saveChqButton: ElementRef;
@@ -96,8 +97,6 @@ export class SalestransactionComponent implements OnInit {
             this.salesDetails[res[2]].sgst_perc = item.sgst_perc
             this.salesDetails[res[2]].igst_perc = item.igst_perc
             this.salesDetails[res[2]].cess_perc = item.cess_perc
-            this.salesDetails[res[2]].unitType = item.unitType
-            this.salesDetails[res[2]].unitName = item.unitName
             this.salesDetails[res[2]].stockValue = item.stock
             this.salesDetails[res[2]].sales = item.sales
             this.salesDetails[res[2]].purchase = item.purchase
@@ -126,17 +125,18 @@ export class SalestransactionComponent implements OnInit {
           this.salesDetails[res[2]].igst_perc = tax.igst_perc
           this.salesDetails[res[2]].cess_perc = tax.cess_perc
           this.salesDetailsCalculation(res[2])
-        } else if (res[1] == "units") {
-          let unit = res[0] as UnitModel
-          if (this.salesDetails[res[2]].quantity * unit.unit > this.salesDetails[res[2]].stockValue) {
-            this.global.showToast("Reached the maximum stock value", "warning", false)
-            return;
-          }
-          this.salesDetails[res[2]].unit = unit.unit
-          this.salesDetails[res[2]].unitName = unit.name
-          this.salesDetails[res[2]].unitType = unit.type
-          this.salesDetailsCalculation(res[2])
         }
+        //  else if (res[1] == "units") {
+        //   let unit = res[0] as UnitModel
+        //   if (this.salesDetails[res[2]].quantity * unit.unit > this.salesDetails[res[2]].stockValue) {
+        //     this.global.showToast("Reached the maximum stock value", "warning", false)
+        //     return;
+        //   }
+        //   this.salesDetails[res[2]].unit = unit.unit
+        //   this.salesDetails[res[2]].unitName = unit.name
+        //   this.salesDetails[res[2]].unitType = unit.type
+        //   this.salesDetailsCalculation(res[2])
+        // }
       })
     this.subscriptions[1] = this.router.queryParams.
       subscribe(params => {
@@ -259,7 +259,7 @@ export class SalestransactionComponent implements OnInit {
   addItem() {
     let index = this.salesDetails.length - 1
     if (this.salesDetails[this.salesDetails.length - 1].itemName) {
-      if (this.checkRowValid(index, this.salesDetails[index].quantity, "quantityInputs") && this.checkRowValid(index, this.salesDetails[index].sp, "spInputs")) {
+      if (this.checkRowValid(index, this.salesDetails[index].quantity, "quantityInputs") && this.checkRowValid(index, this.salesDetails[index].sp, "spInputs") && this.checkRowValid(index, this.salesDetails[index].unit, "unitInputs")) {
         this.salesDetails.push(new SalesDetailModel())
         this.setElementFocus(this.itemCodeInputs, this.salesDetails.length - 1);
       }
@@ -483,9 +483,11 @@ export class SalestransactionComponent implements OnInit {
                   if (this.salesDetails[this.salesDetails.length - 1].itemName == null) {
                     this.salesDetails.splice(this.salesDetails.length - 1, 1)
                   }
-                  this.salesHeader.timestamp = this.salesHeader.invoiceDate.getTime()
-                  this.confimationModalHeader = "Submit"
-                  this.openSubmitModal()
+                  if (this.fullItemsValid()) {
+                    this.salesHeader.timestamp = this.salesHeader.invoiceDate.getTime()
+                    this.confimationModalHeader = "Submit"
+                    this.openSubmitModal()
+                  }
                 } else {
                   this.setElementFocus(this.itemCodeInputs, 0);
                   this.global.showToast("Kindly enter the item details", "warning", false)
@@ -517,8 +519,6 @@ export class SalestransactionComponent implements OnInit {
   getUnitList(event, rowIndex) {
     event.target.value = null;
     this.salesDetails[rowIndex].unit = 1;
-    this.salesDetails[rowIndex].unitType = "KG";
-    this.salesDetails[rowIndex].unitName = "UNIT-1";
     this.salesDetailsCalculation(rowIndex);
     this.lovService.showLovModal(true, "units", "", rowIndex)
   }
@@ -633,8 +633,6 @@ export class SalestransactionComponent implements OnInit {
       items[index] = new ItemModel()
       items[index].code = this.salesDetails[index].itemCode
       items[index].unit = this.salesDetails[index].unit
-      items[index].unitName = this.salesDetails[index].unitName
-      items[index].unitType = this.salesDetails[index].unitType
       if (add) {
         items[index].stock = this.salesDetails[index].stockValue - (this.salesDetails[index].quantity * this.salesDetails[index].unit)
         items[index].sales = this.salesDetails[index].sales + (this.salesDetails[index].quantity * this.salesDetails[index].unit)
@@ -679,7 +677,7 @@ export class SalestransactionComponent implements OnInit {
 
   fullItemsValid(): boolean {
     for (let index = 0; index < this.salesDetails.length; index++) {
-      if (!this.checkRowValid(index, this.salesDetails[index].quantity, "quantityInputs") || !this.checkRowValid(index, this.salesDetails[index].sp, "spInputs")) {
+      if (!this.checkRowValid(index, this.salesDetails[index].quantity, "quantityInputs") || !this.checkRowValid(index, this.salesDetails[index].sp, "spInputs") || !this.checkRowValid(index, this.salesDetails[index].unit, "unitInputs")) {
         return false
       }
     }
