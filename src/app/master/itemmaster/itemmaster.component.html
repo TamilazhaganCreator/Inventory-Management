@@ -24,9 +24,9 @@
       <label for="hsncode" [ngClass]="{'actives': (currentItem.hsncode != null)}">HSN Code</label>
     </div>
     <div class="input-field col s6 ">
-      <input #spInput id="unitName" tabindex="5" type="text" [value]="currentItem.unitName ? currentItem.unitName : ''"
+      <input readonly id="unitName" tabindex="5" type="text" [value]="currentItem.unitName ? currentItem.unitName : ''"
         (keydown.enter)="showLovModal($event,'unit')" (input)="removeTypedValue($event,'unit')">
-      <label for="unitName" [ngClass]="{'actives': (currentItem.unitName != null)}">Unit</label>
+      <label for="unitName" [ngClass]="{'actives': (currentItem.unitName != null)}">Packing</label>
     </div>
     <div class="input-field col s6">
       <input #taxInput id="tax" type="text" [value]="currentItem.taxPercentage" tabindex="6" (keydown.enter)="showTax()"
@@ -38,7 +38,7 @@
         (input)="checkNumberOnly($event,'stock')">
       <label for="stock" [ngClass]="{'actives': (currentItem.stock != null)}">Stock</label>
     </div>
-    <div class="row no-margin-bottom" *ngIf="currentItem.code">
+    <!-- <div class="row no-margin-bottom" *ngIf="currentItem.code">
       <div class="input-field col s6">
         <input id="add" type="text" tabindex="8" [value]="currentItem.addStock ? currentItem.addStock : ''"
           (input)="checkNumberOnly($event,'addStock')">
@@ -61,7 +61,7 @@
             (input)="checkNumberOnly($event,'lessPurchase')">
           <label for="lessPurchase" [ngClass]="{'actives': (currentItem.lessPurchase)}">Less Purchase</label>
         </div>
-      </div>
+      </div> -->
     <div class="col s8 offset-s2 margin-top-24">
       <div class="col s3 offset-s1">
         <div class="thickdarkbluebutton" tabindex="10" (click)="viewAllItems()">View / Edit</div>
