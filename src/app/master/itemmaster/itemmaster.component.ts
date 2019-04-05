@@ -206,6 +206,9 @@ export class ItemmasterComponent implements OnInit {
     this.global.updateLatestSerial(this.serials)
       .then(res => {
         this.currentItem = new ItemModel();
+        this.currentItem.unitName = "UNIT-1"
+        this.currentItem.unitType = "KG"
+        this.currentItem.unit = 1
         this.latestId++;
         this.global.loader = false
         this.global.showToast("Item added successfully", "success", false)
