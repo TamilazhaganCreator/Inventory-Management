@@ -11,6 +11,7 @@ import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model'
 import { SerialNumbersModel } from '../../global.model';
 import { PurchaseDetailModel, PurchaseHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
+import { UnitModel } from './../../master/master.model';
 import { MasterService } from './../../master/master.service';
 
 @Component({
@@ -119,6 +120,12 @@ export class PurchaseComponent implements OnInit {
           this.purchaseDetails[res[2]].sgst_perc = tax.sgst_perc
           this.purchaseDetails[res[2]].igst_perc = tax.igst_perc
           this.purchaseDetails[res[2]].cess_perc = tax.cess_perc
+          this.purchaseDetailsCalculation(res[2])
+        } else if (res[1] == "units") {
+          let unit = res[0] as UnitModel
+          this.purchaseDetails[res[2]].unit = unit.unit
+          this.purchaseDetails[res[2]].unitName = unit.name
+          this.purchaseDetails[res[2]].unitType = unit.type
           this.purchaseDetailsCalculation(res[2])
         }
       })
@@ -394,16 +401,25 @@ export class PurchaseComponent implements OnInit {
   }
 
 
+  getUnitList(event, rowIndex) {
+    event.target.value = null;
+    this.purchaseDetails[rowIndex].unit = 1;
+    this.purchaseDetails[rowIndex].unitType = "KG";
+    this.purchaseDetails[rowIndex].unitName = "UNIT - 1";
+    this.purchaseDetailsCalculation(rowIndex);
+    this.lovService.showLovModal(true, "units", "", rowIndex)
+  }
+
 
 
   checkNumberValue(event, fieldName) {
     if (this.global.numberOnlyFormatRegex.test(event.target.value)) {
-      if(fieldName == 'otherCharges' && this.purchaseHeader.otherCharges){
+      if (fieldName == 'otherCharges' && this.purchaseHeader.otherCharges) {
         this.purchaseHeader.netAmt = this.purchaseHeader.netAmt - this.purchaseHeader.otherCharges
       }
       if (event.target.value != '') {
         this.purchaseHeader[fieldName] = +(event.target.value)
-        if(fieldName == 'otherCharges' && this.purchaseHeader.otherCharges){
+        if (fieldName == 'otherCharges' && this.purchaseHeader.otherCharges) {
           this.purchaseHeader.netAmt = this.purchaseHeader.netAmt + this.purchaseHeader.otherCharges
         }
       } else {
@@ -626,11 +642,11 @@ export class PurchaseComponent implements OnInit {
       items[index].unitName = this.purchaseDetails[index].unitName
       items[index].unitType = this.purchaseDetails[index].unitType
       if (add) {
-        items[index].stock = this.purchaseDetails[index].stockValue + this.purchaseDetails[index].quantity
-        items[index].purchase = this.purchaseDetails[index].purchase + this.purchaseDetails[index].quantity
+        items[index].stock = this.purchaseDetails[index].stockValue + (this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit)
+        items[index].purchase = this.purchaseDetails[index].purchase + (this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit)
       } else {
-        items[index].stock = this.purchaseDetails[index].stockValue - this.purchaseDetails[index].quantity
-        items[index].purchase = this.purchaseDetails[index].purchase - this.purchaseDetails[index].quantity
+        items[index].stock = this.purchaseDetails[index].stockValue - (this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit)
+        items[index].purchase = this.purchaseDetails[index].purchase - (this.purchaseDetails[index].quantity * this.purchaseDetails[index].unit)
       }
       items[index].cgst_perc = this.purchaseDetails[index].cgst_perc
       items[index].sgst_perc = this.purchaseDetails[index].sgst_perc

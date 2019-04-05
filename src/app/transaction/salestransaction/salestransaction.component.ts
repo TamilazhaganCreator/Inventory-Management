@@ -7,7 +7,7 @@ import * as jspdf from 'jspdf';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
-import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model';
+import { CustomerModel, ItemModel, TaxModel, UnitModel } from 'src/app/master/master.model';
 import { SalesDetailModel, SalesHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
 import { SerialNumbersModel } from './../../global.model';
@@ -125,6 +125,16 @@ export class SalestransactionComponent implements OnInit {
           this.salesDetails[res[2]].sgst_perc = tax.sgst_perc
           this.salesDetails[res[2]].igst_perc = tax.igst_perc
           this.salesDetails[res[2]].cess_perc = tax.cess_perc
+          this.salesDetailsCalculation(res[2])
+        } else if (res[1] == "units") {
+          let unit = res[0] as UnitModel
+          if (this.salesDetails[res[2]].quantity * unit.unit > this.salesDetails[res[2]].stockValue) {
+            this.global.showToast("Reached the maximum stock value", "warning", false)
+            return;
+          }
+          this.salesDetails[res[2]].unit = unit.unit
+          this.salesDetails[res[2]].unitName = unit.name
+          this.salesDetails[res[2]].unitType = unit.type
           this.salesDetailsCalculation(res[2])
         }
       })
@@ -261,7 +271,7 @@ export class SalestransactionComponent implements OnInit {
 
   checkField(index: number, event, format: string, field: string) {
     if (this.global[format].test(event.target.value)) {
-      if (field == 'quantity' && +(event.target.value) > this.salesDetails[index].stockValue) {
+      if (field == 'quantity' && (+(event.target.value) * this.salesDetails[index].unit) > this.salesDetails[index].stockValue) {
         event.target.value = this.salesDetails[index].quantity
         this.global.showToast("Reached the maximum stock value", "warning", false)
         return;
@@ -504,6 +514,15 @@ export class SalestransactionComponent implements OnInit {
     }
   }
 
+  getUnitList(event, rowIndex) {
+    event.target.value = null;
+    this.salesDetails[rowIndex].unit = 1;
+    this.salesDetails[rowIndex].unitType = "KG";
+    this.salesDetails[rowIndex].unitName = "UNIT - 1";
+    this.salesDetailsCalculation(rowIndex);
+    this.lovService.showLovModal(true, "units", "", rowIndex)
+  }
+
   yesButtonProcess() {
     if (this.confimationModalHeader == "Clear all") {
       this.clearAll()
@@ -617,11 +636,11 @@ export class SalestransactionComponent implements OnInit {
       items[index].unitName = this.salesDetails[index].unitName
       items[index].unitType = this.salesDetails[index].unitType
       if (add) {
-        items[index].stock = this.salesDetails[index].stockValue - this.salesDetails[index].quantity
-        items[index].sales = this.salesDetails[index].sales + this.salesDetails[index].quantity
+        items[index].stock = this.salesDetails[index].stockValue - (this.salesDetails[index].quantity * this.salesDetails[index].unit)
+        items[index].sales = this.salesDetails[index].sales + (this.salesDetails[index].quantity * this.salesDetails[index].unit)
       } else {
-        items[index].stock = this.salesDetails[index].stockValue + this.salesDetails[index].quantity
-        items[index].sales = this.salesDetails[index].sales - this.salesDetails[index].quantity
+        items[index].stock = this.salesDetails[index].stockValue + (this.salesDetails[index].quantity * this.salesDetails[index].unit)
+        items[index].sales = this.salesDetails[index].sales - (this.salesDetails[index].quantity * this.salesDetails[index].unit)
       }
       items[index].cgst_perc = this.salesDetails[index].cgst_perc
       items[index].sgst_perc = this.salesDetails[index].sgst_perc

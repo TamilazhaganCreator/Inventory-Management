@@ -56,6 +56,9 @@ export class ItemmasterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentItem.unitName = "UNIT-1"
+    this.currentItem.unitType = "KG"
+    this.currentItem.unit = 1
     setTimeout(() => {
       this.global.loader = true
       this.getLatestItem()
@@ -141,6 +144,9 @@ export class ItemmasterComponent implements OnInit {
 
   clearItem() {
     this.currentItem = new ItemModel()
+    this.currentItem.unit = 1
+    this.currentItem.unitType = "KG"
+    this.currentItem.unitName = "UNIT-1"
     this.global.showToast("Reset successfully", "warning", false)
     // if (this.currentItem.code == null) {
     //   this.currentItem = new ItemModel()
