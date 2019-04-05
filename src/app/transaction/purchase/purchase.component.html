@@ -37,10 +37,10 @@
           </select>
         </div>
         <div class="input-field col s3 margin-top-0" *ngIf="purchaseHeader.id">
-            <input readOnly type="text" class="pointer" id="p-type" (click)="showChq()"
-              [value]="purchaseHeader.paymentType == 0? 'Credit':purchaseHeader.paymentType == 1?'Cash':'Cheque'">
-            <label for="p-type" class="active">Payment type</label>
-          </div>
+          <input readOnly type="text" class="pointer" id="p-type" (click)="showChq()"
+            [value]="purchaseHeader.paymentType == 0? 'Credit':purchaseHeader.paymentType == 1?'Cash':'Cheque'">
+          <label for="p-type" class="active">Payment type</label>
+        </div>
       </div>
       <div class="row no-margin-bottom">
         <div class="input-field col s3 margin-zero">
@@ -200,14 +200,15 @@
     <div class="modal-content">
       <div class="row no-margin-bottom">
         <div class="input-field col s12 margin-top-0 ">
-          <input autocomplete="off" type="text" id="bank-name" [readOnly]="purchaseHeader.id" class="margin-zero" [(ngModel)]="purchaseHeader.chqBank">
+          <input autocomplete="off" type="text" id="bank-name" [readOnly]="purchaseHeader.id" class="margin-zero"
+            [(ngModel)]="purchaseHeader.chqBank">
           <label for="bank-name" [ngClass]="{'actives': purchaseHeader.chqBank}">Bank Name</label>
         </div>
       </div>
       <div class="row no-margin-bottom">
         <div class="input-field col s12 ">
           <input autocomplete="off" autocomplete="off" maxlength="6" id="chNo" type="text"
-            [(ngModel)]="purchaseHeader.chqNo"  class="margin-zero" [readOnly]="purchaseHeader.id">
+            [(ngModel)]="purchaseHeader.chqNo" class="margin-zero" [readOnly]="purchaseHeader.id">
           <label for="chNo" [ngClass]="{'actives': purchaseHeader.chqNo}">Cheque No</label>
         </div>
       </div>
@@ -227,8 +228,10 @@
       </div>
     </div>
     <div class="modal-footer" style="border-top:1px solid rgba(0,0,0,0.1)">
-      <a [ngClass]="{'disabled':purchaseHeader.id}" #clearChqButton class="modal-action modal-close  btn-flat" (click)="clearChqDetails()">Cancel</a>
-      <a [ngClass]="{'disabled':purchaseHeader.id}" #saveChqButton class="modal-action  btn-flat" (click)="saveChqDetails()">Save</a>
+      <a [ngClass]="{'disabled':purchaseHeader.id}" #clearChqButton class="modal-action modal-close  btn-flat"
+        (click)="clearChqDetails()">Cancel</a>
+      <a [ngClass]="{'disabled':purchaseHeader.id}" #saveChqButton class="modal-action  btn-flat"
+        (click)="saveChqDetails()">Save</a>
     </div>
   </div>
   <div id="modal2" class="modal" materialize="modal" [materializeActions]="confirmationModal"
@@ -238,14 +241,14 @@
         {{confimationModalHeader}}</h5>
     </div>
     <div class="modal-content row no-margin-bottom">
-        <div *ngIf="confimationModalHeader != 'Delete'">
-          Are you sure want to {{confimationModalHeader.toLowerCase()}} ?
-        </div>
-        <div class="input-field col s12 margin-top-0" *ngIf="confimationModalHeader == 'Delete'">
-          <input id="first_name" type="text" class="validate" [(ngModel)]="deletePwd">
-          <label for="first_name">Enter password</label>
-        </div>
+      <div *ngIf="confimationModalHeader != 'Delete'">
+        Are you sure want to {{confimationModalHeader.toLowerCase()}} ?
       </div>
+      <div class="input-field col s12 margin-top-0" *ngIf="confimationModalHeader == 'Delete'">
+        <input id="first_name" type="text" class="validate" [(ngModel)]="deletePwd">
+        <label for="first_name">Enter password</label>
+      </div>
+    </div>
     <div class="modal-footer">
       <a class="modal-action modal-close btn-flat">No</a>
       <a class="modal-action modal-close  btn-flat" (click)="yesButtonProcess()">Yes</a>
@@ -334,8 +337,10 @@
         </div>
       </div>
       <div class="col s5 left-align bill-dtl left-bdr">
-        <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
+        <div class="col s12 nopad bill-item-dtl" style="text-transform: uppercase"
+          *ngFor="let item of purchaseDetails;let _index = index">
           {{item.itemName}}
+          <br>( {{item.quantity}} X {{item.unit}} {{item.unitType}} )
         </div>
       </div>
       <div class="col s2 bill-dtl left-bdr">
@@ -361,7 +366,8 @@
         </div>
       </div>
     </div>
-    <div class="row no-margin-bottom bill-table-footer" style="border-top: 1px solid black;border-bottom: 1px solid black;">
+    <div class="row no-margin-bottom bill-table-footer"
+      style="border-top: 1px solid black;border-bottom: 1px solid black;">
       <div class="col s7" style="padding-top: 8px;padding-bottom: 8px">
         <div style="padding-bottom:2%">Invoice amount in words: <span
             style="font-weight: 500">{{purchaseHeader.netAmt | numberToWords}} only</span></div>
