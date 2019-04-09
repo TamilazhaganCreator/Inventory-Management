@@ -768,7 +768,7 @@ export class SalestransactionComponent implements OnInit {
   setCompanyInfo(id) {
     if (id == 1) {
       this.companyInfo.name = "SHAALINI TRADERS"
-      this.companyInfo.gst = "33AJLPL7832P1ZK"
+      this.companyInfo.gst = "33AINPR9876N1Z2"
       this.companyInfo.email = "shalinitrade@gmail.com"
       this.companyInfo.bankAddress = "Madhavaram, Chennai"
       this.companyInfo.bankName = "City Union Bank"
@@ -778,7 +778,7 @@ export class SalestransactionComponent implements OnInit {
       this.companyInfo.ifsc = "CIUB000313"
     } else if (id == 2) {
       this.companyInfo.name = "SHANTHINI ENTTERPRISES"
-      this.companyInfo.gst = "33AINPR9876N1Z2"
+      this.companyInfo.gst = "33AJLPL7832P1ZK"
       this.companyInfo.email = "shandhinientterprises@gmail.com"
       this.companyInfo.bankAddress = "Madhavaram, Chennai"
       this.companyInfo.bankName = "City Union Bank"
