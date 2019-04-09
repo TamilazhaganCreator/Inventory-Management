@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
 import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model';
-import { SerialNumbersModel } from '../../global.model';
 import { PurchaseDetailModel, PurchaseHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
 import { UnitModel } from './../../master/master.model';
@@ -65,8 +64,6 @@ export class PurchaseComponent implements OnInit {
   confimationModalHeader: string = ""
   chqModalAction = new EventEmitter<string | MaterializeAction>();
   confirmationModal = new EventEmitter<string | MaterializeAction>();
-  private serials = new SerialNumbersModel()
-  private latestId = 0
   deletePwd = ""
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
@@ -171,10 +168,7 @@ export class PurchaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.global.loader = true;
-      this.getLatestItem()
-    }, 100);
+    this.resetSales()
   }
 
   resetSales() {
@@ -554,44 +548,38 @@ export class PurchaseComponent implements OnInit {
 
   submitToServer() {
     this.global.loader = true
-    this.purchaseHeader.id = this.latestId
-    this.service.addPurchaseHeader(this.purchaseHeader)
-      .then(res => {
-        this.service.addPurchaseDetail(this.purchaseDetails, this.purchaseHeader.id.toString())
-          .then(res => {
-            this.service.updateItemDetails(this.getItemArray(true))
-              .then(res => {
-                let amount = this.getsupplierAmt()
-                this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
-                  .then(res => {
-                    this.printBill(true);
-                  }).catch(e => {
-                    this.global.showToast("Error occured" + e, "error", true)
-                  })
-              }).catch(e => {
-                this.global.showToast("Error occured" + e, "error", true)
-              })
-          }).catch(e => {
-            this.global.showToast("Error occured" + e, "error", true)
-          })
-      }).catch(e => {
-        this.global.showToast("Error occured" + e, "error", true)
-      })
-
-  }
-
-  private getLatestItem() {
-    this.global.getLatestSerial().subscribe(res => {
+    this.global.getLatestId("purchaseHeader", "id").then((res) => {
+      this.purchaseHeader.id = 1
       if (res.docs.length > 0) {
-        this.serials = res.docs[0].data() as SerialNumbersModel
-        this.latestId = this.serials.purchaseHeader + 1
-      } else {
-        this.latestId = 1
+        res.forEach((doc) => {
+          let tempPur = doc.data() as PurchaseHeaderModel
+          this.purchaseHeader.id = tempPur.id + 1
+        })
       }
-      this.resetSales()
-      this.global.loader = false
-    }, error => {
-      this.global.showToast("Error occurred" + error, "error", true)
+      this.service.addPurchaseHeader(this.purchaseHeader)
+        .then(res => {
+          this.service.addPurchaseDetail(this.purchaseDetails, this.purchaseHeader.id.toString())
+            .then(res => {
+              this.service.updateItemDetails(this.getItemArray(true))
+                .then(res => {
+                  let amount = this.getsupplierAmt()
+                  this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
+                    .then(res => {
+                      this.printBill(true);
+                    }).catch(e => {
+                      this.global.showToast("Error occured" + e, "error", true)
+                    })
+                }).catch(e => {
+                  this.global.showToast("Error occured" + e, "error", true)
+                })
+            }).catch(e => {
+              this.global.showToast("Error occured" + e, "error", true)
+            })
+        }).catch(e => {
+          this.global.showToast("Error occured" + e, "error", true)
+        })
+    }).catch(e => {
+      this.global.showToast("Error occured" + e, "error", true)
     })
   }
 
@@ -602,17 +590,6 @@ export class PurchaseComponent implements OnInit {
       this.addInitialItem()
     }
     this.purchaseHeaderCalculation()
-  }
-
-  updateSerials() {
-    this.serials.purchaseHeader = this.serials.purchaseHeader + 1
-    this.global.updateLatestSerial(this.serials)
-      .then(res => {
-        this.latestId++;
-        this.resetSales()
-        this.global.loader = false
-        this.global.showToast("Saved successfully", "success", false)
-      }).catch(e => { this.global.showToast("Error occured" + e, "error", true) })
   }
 
   getsupplierAmt(): number {
@@ -709,7 +686,9 @@ export class PurchaseComponent implements OnInit {
         pdf.save("PURCHASE - " + this.purchaseHeader.supplierName + "- Invoice_No_" + this.purchaseHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false
           if (update) {
-            this.updateSerials();
+            this.resetSales()
+            this.global.loader = false
+            this.global.showToast("Saved successfully", "success", false)
           } else {
             this.resetSales()
             this.global.loader = false

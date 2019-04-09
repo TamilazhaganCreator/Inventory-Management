@@ -10,7 +10,6 @@ import { GlobalService } from 'src/app/global.service';
 import { CustomerModel, ItemModel, TaxModel } from 'src/app/master/master.model';
 import { SalesDetailModel, SalesHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
-import { SerialNumbersModel } from './../../global.model';
 import { MasterService } from './../../master/master.service';
 
 @Component({
@@ -64,8 +63,6 @@ export class SalestransactionComponent implements OnInit {
   confimationModalHeader: string = ""
   chqModalAction = new EventEmitter<string | MaterializeAction>();
   confirmationModal = new EventEmitter<string | MaterializeAction>();
-  private serials = new SerialNumbersModel()
-  private latestId = 0
   deletePwd = ""
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
@@ -179,9 +176,7 @@ export class SalestransactionComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.getLatestItem()
-    }, 100);
+    this.resetSales()
   }
 
   resetSales() {
@@ -541,44 +536,41 @@ export class SalestransactionComponent implements OnInit {
 
   submitToServer() {
     this.global.loader = true
-    this.salesHeader.id = this.latestId
-    this.service.addSalesHeader(this.salesHeader)
-      .then(res => {
-        this.service.addSalesDetail(this.salesDetails, this.salesHeader.id.toString())
-          .then(res => {
-            this.service.updateItemDetails(this.getItemArray(true))
-              .then(res => {
-                let amount = this.getCustomerAmt()
-                this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
-                  .then(res => {
-                    this.printBill(true)
-                  }).catch(e => {
-                    this.global.showToast("Error occured" + e, "error", true)
-                  })
-              }).catch(e => {
-                this.global.showToast("Error occured" + e, "error", true)
-              })
-          }).catch(e => {
-            this.global.showToast("Error occured" + e, "error", true)
-          })
-      }).catch(e => {
-        this.global.showToast("Error occured" + e, "error", true)
-      })
-  }
-
-  private getLatestItem() {
-    this.global.loader = true;
-    this.global.getLatestSerial().subscribe(res => {
+    this.global.getLatestId("salesheader", "id").then((res) => {
+      this.salesHeader.id = 1
       if (res.docs.length > 0) {
-        this.serials = res.docs[0].data() as SerialNumbersModel
-        this.latestId = this.serials.salesHeader + 1
-      } else {
-        this.latestId = 1
+        res.forEach((doc) => {
+          let tempPur = doc.data() as SalesHeaderModel
+          this.salesHeader.id = tempPur.id + 1
+        })
       }
-      this.resetSales()
+      this.service.addSalesHeader(this.salesHeader)
+        .then(res => {
+          this.service.addSalesDetail(this.salesDetails, this.salesHeader.id.toString())
+            .then(res => {
+              this.service.updateItemDetails(this.getItemArray(true))
+                .then(res => {
+                  let amount = this.getCustomerAmt()
+                  this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
+                    .then(res => {
+                      this.printBill(true)
+                    }).catch(e => {
+                      this.global.showToast("Error occured" + e, "error", true)
+                    })
+                }).catch(e => {
+                  this.global.showToast("Error occured" + e, "error", true)
+                })
+            }).catch(e => {
+              this.global.loader = false
+              this.global.showToast("Error occured" + e, "error", true)
+            })
+        }).catch(e => {
+          this.global.loader = false
+          this.global.showToast("Error occured" + e, "error", true)
+        })
+    }).catch(e => {
       this.global.loader = false
-    }, error => {
-      this.global.showToast("Error occurred" + error, "error", true)
+      this.global.showToast("Error occured" + e, "error", true)
     })
   }
 
@@ -589,17 +581,6 @@ export class SalestransactionComponent implements OnInit {
       this.addInitialItem()
     }
     this.salesHeaderCalculation()
-  }
-
-  updateSerials() {
-    this.serials.salesHeader = this.serials.salesHeader + 1
-    this.global.updateLatestSerial(this.serials)
-      .then(res => {
-        this.latestId++;
-        this.resetSales()
-        this.global.loader = false
-        this.global.showToast("Saved successfully", "success", false)
-      }).catch(e => { this.global.showToast("Error occured" + e, "error", true) })
   }
 
   getCustomerAmt(): number {
@@ -698,7 +679,9 @@ export class SalestransactionComponent implements OnInit {
         pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false
           if (update) {
-            this.updateSerials();
+            this.resetSales()
+            this.global.loader = false
+            this.global.showToast("Saved successfully", "success", false)
           } else {
             this.resetSales();
             this.global.loader = false
