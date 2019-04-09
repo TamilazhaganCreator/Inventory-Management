@@ -68,6 +68,10 @@
       color: green
   }
 
+  .para{
+    margin-top: .5em !important;
+    margin-bottom: .5em !important;
+  }
 
   .total-right,.total-left{
     border-left: 1px solid;
