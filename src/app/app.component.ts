@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { GlobalService } from './global.service';
-import { SerialNumbersModel } from './global.model';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +35,6 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     if (localStorage.getItem('loginStatus') == "LoggedIn") {
       this.loggedIn = true
-      this.getSerials();
     } else {
       this.loggedIn = false
     }
@@ -102,27 +100,5 @@ export class AppComponent implements OnInit {
         this.global.loader = false
         this.global.showToast("Logout failed", "warning", false)
       })
-  }
-
-  private getSerials() {
-    setTimeout(() => {
-      this.global.loader = true;
-      this.global.getLatestSerial()
-        .subscribe(res => {
-          if (res.docs.length == 0) {
-            let serials = new SerialNumbersModel();
-            serials.unitMaster = serials.taxMaster = serials.supplierMaster = serials.customerMaster = serials.itemMaster = 0;
-            serials.salesHeader = serials.purchaseHeader = 0;
-            this.global.setLatestSerial(serials).then(res => {
-              this.global.loader = false;
-            }).catch(e => {
-              this.global.showToast("Error occured" + e, "error", true);
-            });
-          }
-          else {
-            this.global.loader = false;
-          }
-        });
-    }, 100);
   }
 }
