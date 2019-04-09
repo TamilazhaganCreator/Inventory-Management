@@ -162,7 +162,10 @@
                 (input)="removeTax(rowIndex)" class="input-design" maxlength="1" [value]="item.taxPercentage">
             </div>
             <div class="col s4">
-              <input #unitInputs autocomplete="off" (input)="checkField(rowIndex,$event,'numberwith2DecimalRegex','unit')" [readOnly]="!salesHeader.customerValid || !item.itemName || salesHeader.id" type="text" class="input-design" [value]="item.unit?item.unit:''">
+              <input #unitInputs autocomplete="off"
+                (input)="checkField(rowIndex,$event,'numberwith2DecimalRegex','unit')"
+                [readOnly]="!salesHeader.customerValid || !item.itemName || salesHeader.id" type="text"
+                class="input-design" [value]="item.unit?item.unit:''">
             </div>
           </div>
           <div class="col s1">
@@ -232,19 +235,26 @@
         (click)="saveChqDetails()">Save</a>
     </div>
   </div>
-  <div id="modal2" class="modal" materialize="modal" [materializeActions]="confirmationModal"
-    [materializeParams]="confirmationModalParams">
+  <div id="modal2" class="modal" [ngClass]="{'modal-fixed-footer hide-y':without}" materialize="modal"
+    [materializeActions]="confirmationModal" [materializeParams]="without?'':confirmationModalParams">
     <div class="modal-header-second">
       <h5 class="modal-header-title" style="display:inline-block;padding-top:2.4%;padding-bottom: 2.4%">
         {{confimationModalHeader}}</h5>
     </div>
     <div class="modal-content row no-margin-bottom">
-      <div *ngIf="confimationModalHeader != 'Delete'">
+      <div *ngIf="confimationModalHeader != 'Delete' && !without">
         Are you sure want to {{confimationModalHeader.toLowerCase()}} ?
       </div>
       <div class="input-field col s12 margin-top-0" *ngIf="confimationModalHeader == 'Delete'">
         <input id="first_name" type="text" class="validate" [(ngModel)]="deletePwd">
         <label for="first_name">Enter password</label>
+      </div>
+      <div class="input-field col s12 margin-top-0" *ngIf="confimationModalHeader != 'Delete' && without">
+        <select materialize="material_select" (change)="setCompanyInfo($event.target.value)">
+          <option value="" disabled selected>Choose your company ? </option>
+          <option value="1">Shaalini Traders</option>
+          <option value="2">Shanthini Entterprises</option>
+        </select>
       </div>
     </div>
     <div class="modal-footer">
@@ -264,13 +274,13 @@
         <div class="col s3">
           <div _ngcontent-c2="" class="col s12 right-align valign-wrapper pad-left-38">
             <i class="material-icons phone">phone</i>
-            9380966777</div>
+            {{companyInfo.mb1}}</div>
           <div _ngcontent-c2="" class="col s12 right-align valign-wrapper pad-left-38">
             <i class="material-icons phone">phone</i>
-            9080537678</div>
+            {{companyInfo.mb2}}</div>
         </div>
       </div>
-      <h4 style="font-weight:500;margin-top:0">SHAALINI TRADERS</h4>
+      <h4 style="font-weight:500;margin-top:0;text-transform: uppercase">{{companyInfo.name}}</h4>
       <div>
         Factory: No.2, Lotus Colony, 3rd Street, Thattankulam Road, Madhavaram, Chennai-60
       </div>
@@ -278,7 +288,7 @@
         Office: 7/14, Samy Nagar, 2nd Cross Street,Madhavaram, Chennai-60
       </div>
       <div>
-        Email: shalinitrade@gmail.com
+        Email: {{companyInfo.email}}
       </div>
     </div>
     <div class="row no-margin-bottom bill-sub-hdr "
@@ -298,7 +308,7 @@
         Sales Invoice
       </div>
       <div class="col s4 right-align" style="border-left:1px solid black">
-        GSTIN: 33AINPR9876N1Z2
+        GSTIN: {{companyInfo.gst}}
       </div>
     </div>
     <div class="row no-margin-bottom bill-customer-dtl" style="border-bottom: 1px solid;">
@@ -394,17 +404,18 @@
       <div class="col s7 nopad" style="font-weight:500">
         <div><u>Bank Details</u></div>
         <div class="col s3 nopad">Bank Name <span style="float:right">:</span> </div>
-        <div class="col s9">City Union Bank</div>
+        <div class="col s9">{{companyInfo.bankName}}</div>
         <div class="col s3 nopad">Bank A/c No <span style="float:right">:</span> </div>
-        <div class="col s9">510909010000691</div>
+        <div class="col s9">{{companyInfo.bankNo}}</div>
         <div class="col s3 nopad">IFSC Code<span style="float:right">:</span> </div>
-        <div class="col s9">CIUB000313</div>
+        <div class="col s9">{{companyInfo.ifsc}}</div>
         <div class="col s3 nopad">Branch <span style="float:right">:</span> </div>
-        <div class="col s9">Madhavaram, Chennai</div>
+        <div class="col s9">{{companyInfo.bankAddress}}</div>
       </div>
       <div class="col s5 right-align">
         <div>
-          <h5 style="font-size: 1.2rem;font-weight: 500"><span style="font-size:1rem;">For </span>SHAALINI TRADERS</h5>
+          <h5 style="font-size: 1.2rem;font-weight: 500"><span style="font-size:1rem;">For </span>{{companyInfo.name}}
+          </h5>
         </div>
         <div style="    height: 3rem;"></div>
         <div>Authorised signatory</div>

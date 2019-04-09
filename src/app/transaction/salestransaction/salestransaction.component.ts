@@ -12,6 +12,7 @@ import { SalesDetailModel, SalesHeaderModel } from '../transaction.model';
 import { TransactionService } from '../transaction.service';
 import { SerialNumbersModel } from './../../global.model';
 import { MasterService } from './../../master/master.service';
+import { CompanyModel } from './../transaction.model';
 
 @Component({
   selector: 'app-salestransaction',
@@ -50,12 +51,6 @@ export class SalestransactionComponent implements OnInit {
       }
     }
   ]
-  confirmationModalParams = [
-    {
-      startingTop: '30%',
-      endingTop: '30%'
-    }
-  ]
 
   paymentTypeShow = true
   salesHeader = new SalesHeaderModel();
@@ -80,6 +75,14 @@ export class SalestransactionComponent implements OnInit {
   private alphaNumericRegex: RegExp = /^[a-zA-Z0-9\._-]*$/
   private tenNumberWithTwoDigitsFormatRegex: RegExp = /^\d{0,10}(?:\.\d{0,2})?$/;
   billShow: boolean = false
+  companyInfo = new CompanyModel();
+  without = false
+  confirmationModalParams = [
+    {
+      startingTop: '30%',
+      endingTop: '30%'
+    }
+  ]
 
   constructor(private lovService: GenericLovService, private global: GlobalService, private service: TransactionService,
     private router: ActivatedRoute, private masterService: MasterService, private routerChange: Router) {
@@ -368,13 +371,21 @@ export class SalestransactionComponent implements OnInit {
   }
 
   openSubmitModal() {
+    if (this.confimationModalHeader == 'Submit' || this.confimationModalHeader == 'Print') {
+      if (window.location.href.includes('localhost')) {
+        this.without = true
+      } else {
+        this.without = false
+      }
+    } else {
+      this.without = false
+    }
     this.confirmationModal.emit({ action: "modal", params: ["open"] });
   }
 
   closeChqModal() {
     this.chqModalAction.emit({ action: "modal", params: ["close"] });
   }
-
 
   checkNumberValue(event, fieldName) {
     if (this.global.numberOnlyFormatRegex.test(event.target.value)) {
@@ -465,7 +476,8 @@ export class SalestransactionComponent implements OnInit {
 
   endProcess() {
     if (this.salesHeader.id) {
-      this.printBill(false)
+      this.confimationModalHeader = "Print"
+      this.openSubmitModal();
     } else {
       this.submitProcess()
     }
@@ -535,6 +547,8 @@ export class SalestransactionComponent implements OnInit {
       } else {
         this.global.showToast("Invalid password", "warning", false)
       }
+    } else if (this.confimationModalHeader == "Print") {
+      this.printBill(false)
     }
   }
 
@@ -749,6 +763,30 @@ export class SalestransactionComponent implements OnInit {
 
   private getCessAmt(): number {
     return this.salesDetails.filter(d => d.itemName).map(d => d.cessAmt).reduce((a, b) => a + b, 0)
+  }
+
+  setCompanyInfo(id) {
+    if (id == 1) {
+      this.companyInfo.name = "SHAALINI TRADERS"
+      this.companyInfo.gst = "33AJLPL7832P1ZK"
+      this.companyInfo.email = "shalinitrade@gmail.com"
+      this.companyInfo.bankAddress = "Madhavaram, Chennai"
+      this.companyInfo.bankName = "City Union Bank"
+      this.companyInfo.bankNo = 510909010000692
+      this.companyInfo.mb1 = 9380966777
+      this.companyInfo.mb2 = 9080537678
+      this.companyInfo.ifsc = "CIUB000313"
+    } else if (id == 2) {
+      this.companyInfo.name = "SHANTHINI ENTTERPRISES"
+      this.companyInfo.gst = "33AINPR9876N1Z2"
+      this.companyInfo.email = "shandhinientterprises@gmail.com"
+      this.companyInfo.bankAddress = "Madhavaram, Chennai"
+      this.companyInfo.bankName = "City Union Bank"
+      this.companyInfo.bankNo = 510909010048088
+      this.companyInfo.mb1 = 8438431196
+      this.companyInfo.mb2 = 7200195262
+      this.companyInfo.ifsc = "CIUB000313"
+    }
   }
 }
 
