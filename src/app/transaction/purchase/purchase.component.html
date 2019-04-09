@@ -360,7 +360,7 @@
         </div>
         <div class="col s6 right-align bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
-            {{item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt}}
+            {{roundOff(item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt)}}
           </div>
         </div>
       </div>
@@ -377,7 +377,7 @@
       </div>
       <div class="col s5 center-align" style="padding-right:0">
         <div class="col s6 total-left">Total </div>
-        <div class="col s6 right-align total-right">{{purchaseHeader.netAmt - purchaseHeader.taxAmt}}</div>
+        <div class="col s6 right-align total-right">{{roundOff(purchaseHeader.netAmt - purchaseHeader.taxAmt)}}</div>
         <div class="col s6 total-left">CGST @ {{purchaseDetails[0].cgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
         <div class="col s6 total-left">SGST @ {{purchaseDetails[0].sgst_perc}}%</div>

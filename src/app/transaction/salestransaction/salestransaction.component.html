@@ -162,7 +162,10 @@
                 (input)="removeTax(rowIndex)" class="input-design" maxlength="1" [value]="item.taxPercentage">
             </div>
             <div class="col s4">
-              <input #unitInputs autocomplete="off" (input)="checkField(rowIndex,$event,'numberwith2DecimalRegex','unit')" [readOnly]="!salesHeader.customerValid || !item.itemName || salesHeader.id" type="text" class="input-design" [value]="item.unit?item.unit:''">
+              <input #unitInputs autocomplete="off"
+                (input)="checkField(rowIndex,$event,'numberwith2DecimalRegex','unit')"
+                [readOnly]="!salesHeader.customerValid || !item.itemName || salesHeader.id" type="text"
+                class="input-design" [value]="item.unit?item.unit:''">
             </div>
           </div>
           <div class="col s1">
@@ -309,11 +312,13 @@
         <div>GSTIN: {{salesHeader.customerGSTNo}}</div>
       </div>
       <div class="col s6" style="padding: 8px;border-left: 1px solid black;padding-bottom: 1.1rem;">
-        <div class="col s6">Invoice No: {{salesHeader.invoiceNo}} </div>
-        <div class="col s6">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
-        <div class="col s12">Sales under from: GST sales</div>
         <div class="col s12">
-          <p>Dispatch details :</p>
+          <p class="para">Invoice No: {{salesHeader.invoiceNo}} </p>
+        </div>
+        <div class="col s7">Sales under from: GST sales</div>
+        <div class="col s5">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
+        <div class="col s12">
+          <p class="para">Dispatch details :</p>
         </div>
         <div class="col s12">Place of supply: Chennai</div>
       </div>
@@ -358,7 +363,7 @@
         </div>
         <div class="col s6 right-align bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;let _index = index">
-            {{item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt}}
+            {{roundOff(item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt)}}
           </div>
         </div>
       </div>
@@ -376,7 +381,7 @@
       </div>
       <div class="col s5 center-align" style="padding-right:0">
         <div class="col s6 total-left">Total </div>
-        <div class="col s6 right-align total-right">{{salesHeader.netAmt - salesHeader.taxAmt}}</div>
+        <div class="col s6 right-align total-right">{{roundOff(salesHeader.netAmt - salesHeader.taxAmt)}}</div>
         <div class="col s6 total-left">CGST @ {{salesDetails[0].cgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
         <div class="col s6 total-left">SGST @ {{salesDetails[0].sgst_perc}}%</div>

@@ -562,7 +562,7 @@ export class PurchaseComponent implements OnInit {
             .then(res => {
               this.service.updateItemDetails(this.getItemArray(true))
                 .then(res => {
-                  let amount = this.getsupplierAmt()
+                  let amount = this.roundOff(this.getsupplierAmt())
                   this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
                     .then(res => {
                       this.printBill(true);
