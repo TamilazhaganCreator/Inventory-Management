@@ -307,8 +307,13 @@
       <div class="col s4 center-align" style="border-left:1px solid black">
         Sales Invoice
       </div>
+<<<<<<< HEAD
       <div class="col s4 right-align" style="border-left:1px solid black">
         GSTIN: {{companyInfo.gst}}
+=======
+      <div class="col s4 right-align" style="font-size:1rem;border-left:1px solid black">
+        GSTIN: 33AINPR9876N1Z2
+>>>>>>> 0734442... common bill UI changes
       </div>
     </div>
     <div class="row no-margin-bottom bill-customer-dtl" style="border-bottom: 1px solid;">
@@ -319,11 +324,13 @@
         <div>GSTIN: {{salesHeader.customerGSTNo}}</div>
       </div>
       <div class="col s6" style="padding: 8px;border-left: 1px solid black;padding-bottom: 1.1rem;">
-        <div class="col s6">Invoice No: {{salesHeader.invoiceNo}} </div>
-        <div class="col s6">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
-        <div class="col s12">Sales under from: GST sales</div>
         <div class="col s12">
-          <p>Dispatch details :</p>
+          <p class="para">Invoice No: {{salesHeader.invoiceNo}} </p>
+        </div>
+        <div class="col s7">Sales under from: GST sales</div>
+        <div class="col s5">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
+        <div class="col s12">
+          <p class="para">Dispatch details :</p>
         </div>
         <div class="col s12">Place of supply: Chennai</div>
       </div>
@@ -369,7 +376,7 @@
         </div>
         <div class="col s6 right-align bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;let _index = index">
-            {{item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt}}
+            {{roundOff(item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt)}}
           </div>
         </div>
       </div>
@@ -387,7 +394,7 @@
       </div>
       <div class="col s5 center-align" style="padding-right:0">
         <div class="col s6 total-left">Total </div>
-        <div class="col s6 right-align total-right">{{salesHeader.netAmt - salesHeader.taxAmt}}</div>
+        <div class="col s6 right-align total-right">{{roundOff(salesHeader.netAmt - salesHeader.taxAmt)}}</div>
         <div class="col s6 total-left">CGST @ {{salesDetails[0].cgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
         <div class="col s6 total-left">SGST @ {{salesDetails[0].sgst_perc}}%</div>

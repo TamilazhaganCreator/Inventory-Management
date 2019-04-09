@@ -144,7 +144,7 @@ export class SalestransactionComponent implements OnInit {
         if (id) {
           this.service.getHeaderDetails("salesheader", id)
             .subscribe((res) => {
-              this.global.routeLoader = true
+              this.global.loader = true
               let temHeader = res.data() as SalesHeaderModel
               this.masterService.getItem("customermaster", temHeader.customerCode.toString())
                 .subscribe((cust) => {
@@ -163,7 +163,7 @@ export class SalestransactionComponent implements OnInit {
                       temHeader.invoiceDate = new Date(temHeader.timestamp)
                       this.salesHeader = temHeader
                       this.salesHeader.customerValid = true
-                      this.global.routeLoader = false
+                      this.global.loader = false
                       this.global.showToast("Sales details for that row - [ READ ONLY MODE ]", "success", true)
                     }, error => {
                       this.global.showToast("Error occurred" + error, "error", true)
@@ -294,7 +294,7 @@ export class SalestransactionComponent implements OnInit {
           this.salesDetails[index].sgstAmt = this.roundOff(totalAmt * ((this.salesDetails[index].cgst_perc) / 100))
           this.salesDetails[index].cgstAmt = this.roundOff(totalAmt * ((this.salesDetails[index].sgst_perc) / 100))
           this.salesDetails[index].igstAmt = 0
-          this.salesDetails[index].netAmt = this.roundOff(totalAmt + this.salesDetails[index].sgstAmt + this.salesDetails[index].cgstAmt + this.salesDetails[index].cessAmt)
+          this.salesDetails[index].netAmt =this.roundOff(totalAmt + this.salesDetails[index].sgstAmt + this.salesDetails[index].cgstAmt + this.salesDetails[index].cessAmt)
         } else if (this.salesHeader.customerLocation == 1) {
           this.salesDetails[index].igstAmt = this.roundOff(totalAmt * (this.salesDetails[index].taxPercentage / 100))
           this.salesDetails[index].cgstAmt = this.salesDetails[index].sgstAmt = 0
@@ -564,7 +564,7 @@ export class SalestransactionComponent implements OnInit {
             .then(res => {
               this.service.updateItemDetails(this.getItemArray(true))
                 .then(res => {
-                  let amount = this.getCustomerAmt()
+                  let amount = this.roundOff(this.getCustomerAmt())
                   this.service.updateCustomerAmount("customermaster", this.salesHeader.customerCode.toString(), amount)
                     .then(res => {
                       this.printBill(true)
@@ -680,30 +680,30 @@ export class SalestransactionComponent implements OnInit {
   }
 
   public printBill(update: boolean) {
-    this.global.loader = true
+    // this.global.loader = true
     this.billShow = true
-    setTimeout(() => {
-      var data = document.getElementById('bill');
-      html2canvas(data).then(canvas => {
-        const contentDataURL = canvas.toDataURL('image/png')
-        let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
-        var position = 0;
-        pdf.addImage(contentDataURL, 'PNG', 0, 0)
-        let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
-        pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
-          this.billShow = false
-          if (update) {
-            this.resetSales()
-            this.global.loader = false
-            this.global.showToast("Saved successfully", "success", false)
-          } else {
-            this.resetSales();
-            this.global.loader = false
-            this.routerChange.navigate(['/'])
-          }
-        })
-      });
-    }, 100);
+    // setTimeout(() => {
+    //   var data = document.getElementById('bill');
+    //   html2canvas(data).then(canvas => {
+    //     const contentDataURL = canvas.toDataURL('image/png')
+    //     let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
+    //     var position = 0;
+    //     pdf.addImage(contentDataURL, 'PNG', 0, 0)
+    //     let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
+    //     pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
+    //       this.billShow = false
+    //       if (update) {
+    //         this.resetSales()
+    //         this.global.loader = false
+    //         this.global.showToast("Saved successfully", "success", false)
+    //       } else {
+    //         this.resetSales();
+    //         this.global.loader = false
+    //         this.routerChange.navigate(['/'])
+    //       }
+    //     })
+    //   });
+    // }, 100);
   }
 
 
