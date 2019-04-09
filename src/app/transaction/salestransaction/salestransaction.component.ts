@@ -666,30 +666,30 @@ export class SalestransactionComponent implements OnInit {
   }
 
   public printBill(update: boolean) {
-    // this.global.loader = true
+    this.global.loader = true
     this.billShow = true
-    // setTimeout(() => {
-    //   var data = document.getElementById('bill');
-    //   html2canvas(data).then(canvas => {
-    //     const contentDataURL = canvas.toDataURL('image/png')
-    //     let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
-    //     var position = 0;
-    //     pdf.addImage(contentDataURL, 'PNG', 0, 0)
-    //     let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
-    //     pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
-    //       this.billShow = false
-    //       if (update) {
-    //         this.resetSales()
-    //         this.global.loader = false
-    //         this.global.showToast("Saved successfully", "success", false)
-    //       } else {
-    //         this.resetSales();
-    //         this.global.loader = false
-    //         this.routerChange.navigate(['/'])
-    //       }
-    //     })
-    //   });
-    // }, 100);
+    setTimeout(() => {
+      var data = document.getElementById('bill');
+      html2canvas(data).then(canvas => {
+        const contentDataURL = canvas.toDataURL('image/png')
+        let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
+        var position = 0;
+        pdf.addImage(contentDataURL, 'PNG', 0, 0)
+        let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
+        pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
+          this.billShow = false
+          if (update) {
+            this.resetSales()
+            this.global.loader = false
+            this.global.showToast("Saved successfully", "success", false)
+          } else {
+            this.resetSales();
+            this.global.loader = false
+            this.routerChange.navigate(['/'])
+          }
+        })
+      });
+    }, 100);
   }
 
 
