@@ -1,12 +1,10 @@
-import { TaxModel } from './../master.model';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { toast } from 'materialize-css';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
-import { HsnModel, ItemModel, UnitModel } from '../master.model';
+import { ItemModel } from '../master.model';
 import { MasterService } from '../master.service';
-import { SerialNumbersModel } from 'src/app/global.model';
+import { TaxModel } from './../master.model';
 
 @Component({
   selector: 'app-itemmaster',
@@ -16,9 +14,7 @@ import { SerialNumbersModel } from 'src/app/global.model';
 export class ItemmasterComponent implements OnInit {
 
   currentItem: ItemModel = new ItemModel()
-  private latestId: number = 0;
   private subscriptions: Subscription[] = []
-  private serials = new SerialNumbersModel();
   @ViewChild("spInput") private spInput: ElementRef;
   @ViewChild("nameInput") private nameInput: ElementRef;
   @ViewChild("taxInput") private taxInput: ElementRef;
@@ -56,10 +52,6 @@ export class ItemmasterComponent implements OnInit {
 
   ngOnInit() {
     this.currentItem.unit = 1
-    setTimeout(() => {
-      this.global.loader = true
-      this.getLatestItem()
-    }, 100);
   }
 
   removeTypedValue(event, from) {
@@ -87,20 +79,6 @@ export class ItemmasterComponent implements OnInit {
     } else {
       event.target.value = this.currentItem[field] ? this.currentItem[field] : ''
     }
-  }
-
-  private getLatestItem() {
-    this.global.getLatestSerial().subscribe(res => {
-      if (res.docs.length > 0) {
-        this.serials = res.docs[0].data() as SerialNumbersModel
-        this.latestId = this.serials.itemMaster + 1
-      } else {
-        this.latestId = 1
-      }
-      this.global.loader = false
-    }, error => {
-      this.global.showToast("Error occurred" + error, "error", true)
-    })
   }
 
   private setItemStock() {
@@ -186,28 +164,28 @@ export class ItemmasterComponent implements OnInit {
 
   addItem() {
     this.global.loader = true
-    this.currentItem.code = this.latestId
-    this.service.addItem(this.currentItem)
-      .then(res => {
-        this.updateSerials();
-      }).catch(e => {
-        this.global.loader = false
-        this.global.showToast("Error occured " + e, "error", true)
-      })
-  }
-
-  updateSerials() {
-    this.serials.itemMaster = this.serials.itemMaster + 1
-    this.global.updateLatestSerial(this.serials)
-      .then(res => {
-        this.currentItem = new ItemModel();
-        this.currentItem.unit = 1
-        this.latestId++;
-        this.global.loader = false
-        this.global.showToast("Item added successfully", "success", false)
-      }).catch(e => {
-        this.global.showToast("Error occured" + e, "error", true)
-      })
+    this.global.getLatestId("itemmaster", "code").then((res) => {
+      this.currentItem.code = 1
+      if (res.docs.length > 0) {
+        res.forEach((doc) => {
+          let tempItem = doc.data() as ItemModel
+          this.currentItem.code = tempItem.code + 1
+        })
+      }
+      this.service.addItem(this.currentItem)
+        .then(res => {
+          this.currentItem = new ItemModel();
+          this.currentItem.unit = 1
+          this.global.loader = false
+          this.global.showToast("Item added successfully", "success", false)
+        }).catch(e => {
+          this.global.loader = false
+          this.global.showToast("Error occured " + e, "error", true)
+        })
+    }).catch(e => {
+      this.global.loader = false
+      this.global.showToast("Error occured " + e, "error", true)
+    })
   }
 
   updateItem() {

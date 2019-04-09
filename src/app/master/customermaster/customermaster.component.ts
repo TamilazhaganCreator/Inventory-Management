@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
-import { SerialNumbersModel } from 'src/app/global.model';
 import { GlobalService } from 'src/app/global.service';
 import { CustomerModel } from '../master.model';
 import { MasterService } from '../master.service';
@@ -16,10 +15,8 @@ export class CustomermasterComponent implements OnInit {
 
   private subscriptions: Subscription[] = []
   customer = new CustomerModel();
-  private latestId = 1;
   private collectionName = "customermaster"
   masterName = "Customer"
-  private serials = new SerialNumbersModel()
   @ViewChild("nameInput") private nameInput: ElementRef;
 
   constructor(private router: Router, private global: GlobalService, private service: MasterService, private lovService: GenericLovService) {
@@ -43,28 +40,6 @@ export class CustomermasterComponent implements OnInit {
       this.collectionName = "suppliermaster"
       this.masterName = "Supplier"
     }
-    setTimeout(() => {
-      this.global.loader = true
-      this.getLatestSerial()
-    }, 100);
-  }
-
-  private getLatestSerial() {
-    this.global.getLatestSerial().subscribe(res => {
-      if (res.docs.length > 0) {
-        this.serials = res.docs[0].data() as SerialNumbersModel
-        if (this.collectionName == "suppliermaster") {
-          this.latestId = this.serials.supplierMaster + 1
-        } else {
-          this.latestId = this.serials.customerMaster + 1
-        }
-      } else {
-        this.latestId = 1
-      }
-      this.global.loader = false
-    }, error => {
-      this.global.showToast("Error occured" + error, "error", true)
-    })
   }
 
   saveCustomer() {
@@ -139,31 +114,27 @@ export class CustomermasterComponent implements OnInit {
 
   addCustomer() {
     this.global.loader = true
-    this.customer.code = this.latestId
-    this.service.addCustomer(this.collectionName, this.customer)
-      .then(res => {
-        this.updateSerials()
-      }).catch(e => {
-        this.global.loader = false
-        this.global.showToast("Error occured " + e, "error", true)
-      })
-  }
-
-
-  updateSerials() {
-    if (this.collectionName == "customermaster") {
-      this.serials.customerMaster = this.serials.customerMaster + 1
-    } else {
-      this.serials.supplierMaster = this.serials.supplierMaster + 1
-    }
-    this.global.updateLatestSerial(this.serials)
-      .then(res => {
-        this.customer = new CustomerModel();
-        this.latestId++;
-        this.global.loader = false
-        this.global.showToast(this.masterName + " added successfully", "success", false)
-      }).catch(e => { this.global.showToast("Error occured" + e, "error", true) })
-
+    this.global.getLatestId(this.collectionName, "code").then((res) => {
+      this.customer.code = 1;
+      if (res.docs.length > 0) {
+        res.forEach((doc) => {
+          let tempCust = doc.data() as CustomerModel
+          this.customer.code = tempCust.code + 1
+        })
+      }
+      this.service.addCustomer(this.collectionName, this.customer)
+        .then(res => {
+          this.customer = new CustomerModel();
+          this.global.loader = false
+          this.global.showToast(this.masterName + " added successfully", "success", false)
+        }).catch(e => {
+          this.global.loader = false
+          this.global.showToast("Error occured " + e, "error", true)
+        })
+    }).catch(e => {
+      this.global.loader = false
+      this.global.showToast("Error occured " + e, "error", true)
+    })
   }
 
   checkAmt(event, field) {
