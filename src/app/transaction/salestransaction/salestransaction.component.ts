@@ -291,7 +291,7 @@ export class SalestransactionComponent implements OnInit {
           this.salesDetails[index].sgstAmt = this.roundOff(totalAmt * ((this.salesDetails[index].cgst_perc) / 100))
           this.salesDetails[index].cgstAmt = this.roundOff(totalAmt * ((this.salesDetails[index].sgst_perc) / 100))
           this.salesDetails[index].igstAmt = 0
-          this.salesDetails[index].netAmt =this.roundOff(totalAmt + this.salesDetails[index].sgstAmt + this.salesDetails[index].cgstAmt + this.salesDetails[index].cessAmt)
+          this.salesDetails[index].netAmt = this.roundOff(totalAmt + this.salesDetails[index].sgstAmt + this.salesDetails[index].cgstAmt + this.salesDetails[index].cessAmt)
         } else if (this.salesHeader.customerLocation == 1) {
           this.salesDetails[index].igstAmt = this.roundOff(totalAmt * (this.salesDetails[index].taxPercentage / 100))
           this.salesDetails[index].cgstAmt = this.salesDetails[index].sgstAmt = 0
@@ -670,10 +670,11 @@ export class SalestransactionComponent implements OnInit {
     this.billShow = true
     setTimeout(() => {
       var data = document.getElementById('bill');
-      html2canvas(data).then(canvas => {
+      html2canvas(data, { scale: 2 }).then(canvas => {
         const contentDataURL = canvas.toDataURL('image/png')
         let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
         var position = 0;
+        pdf.internal.scaleFactor = 5.66
         pdf.addImage(contentDataURL, 'PNG', 0, 0)
         let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
         pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
