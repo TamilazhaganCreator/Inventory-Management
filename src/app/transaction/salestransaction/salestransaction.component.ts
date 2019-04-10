@@ -74,7 +74,7 @@ export class SalestransactionComponent implements OnInit {
   @ViewChild("otherChargesInput") private otherChargesInput: ElementRef;
   @ViewChild("paidAmtInput") private paidAmtInput: ElementRef;
   @ViewChild("custNameInput") private custNameInput: ElementRef;
-  private alphaNumericRegex: RegExp = /^[a-zA-Z0-9\._-]*$/
+  private alphaNumericRegex: RegExp = /^[a-zA-Z0-9\/._-]*$/
   private tenNumberWithTwoDigitsFormatRegex: RegExp = /^\d{0,10}(?:\.\d{0,2})?$/;
   billShow: boolean = false
 
