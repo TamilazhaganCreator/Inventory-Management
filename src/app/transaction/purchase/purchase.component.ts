@@ -402,11 +402,11 @@ export class PurchaseComponent implements OnInit {
 
 
   checkNumberValue(event, fieldName) {
-    if (this.global.numberOnlyFormatRegex.test(event.target.value)) {
+    if (this.tenNumberWithTwoDigitsFormatRegex.test(event.target.value)) {
       if (fieldName == 'otherCharges' && this.purchaseHeader.otherCharges) {
         this.purchaseHeader.netAmt = this.purchaseHeader.netAmt - this.purchaseHeader.otherCharges
       }
-      if (event.target.value != '') {
+      if (event.target.value != '' && event.target.value != '.') {
         this.purchaseHeader[fieldName] = +(event.target.value)
         if (fieldName == 'otherCharges' && this.purchaseHeader.otherCharges) {
           this.purchaseHeader.netAmt = this.purchaseHeader.netAmt + this.purchaseHeader.otherCharges
