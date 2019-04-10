@@ -381,7 +381,7 @@
       </div>
       <div class="col s5 center-align" style="padding-right:0">
         <div class="col s6 total-left">Total </div>
-        <div class="col s6 right-align total-right">{{roundOff(salesHeader.netAmt - salesHeader.taxAmt)}}</div>
+        <div class="col s6 right-align total-right">{{roundOff(salesHeader.netAmt - salesHeader.taxAmt - salesHeader.otherCharges)}}</div>
         <div class="col s6 total-left">CGST @ {{salesDetails[0].cgst_perc}}%</div>
         <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
         <div class="col s6 total-left">SGST @ {{salesDetails[0].sgst_perc}}%</div>
