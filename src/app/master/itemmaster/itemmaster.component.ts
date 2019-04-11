@@ -165,23 +165,30 @@ export class ItemmasterComponent implements OnInit {
   addItem() {
     this.global.loader = true
     this.global.getLatestId("itemmaster", "code").then((res) => {
-      this.currentItem.code = 1
+      let code = -1
       if (res.docs.length > 0) {
         res.forEach((doc) => {
-          let tempItem = doc.data() as ItemModel
-          this.currentItem.code = tempItem.code + 1
+          let item = doc.data() as ItemModel
+          code = item.code + 1
         })
+      } else if (res.docs && res.docs.length == 0) {
+        code = 1
       }
-      this.service.addItem(this.currentItem)
-        .then(res => {
-          this.currentItem = new ItemModel();
-          this.currentItem.unit = 1
-          this.global.loader = false
-          this.global.showToast("Item added successfully", "success", false)
-        }).catch(e => {
-          this.global.loader = false
-          this.global.showToast("Error occured " + e, "error", true)
-        })
+      if (code > -1) {
+        this.currentItem.code = code
+        this.service.addItem(this.currentItem)
+          .then(res => {
+            this.currentItem = new ItemModel();
+            this.currentItem.unit = 1
+            this.global.loader = false
+            this.global.showToast("Item added successfully", "success", false)
+          }).catch(e => {
+            this.global.loader = false
+            this.global.showToast("Error occured " + e, "error", true)
+          })
+      } else {
+        this.global.showToast("There is some connectivity issues,Retry", "error", true)
+      }
     }).catch(e => {
       this.global.loader = false
       this.global.showToast("Error occured " + e, "error", true)
