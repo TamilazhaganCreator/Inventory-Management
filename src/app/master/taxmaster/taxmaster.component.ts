@@ -52,26 +52,34 @@ export class TaxmasterComponent {
   private addTax() {
     this.global.loader = true;
     this.global.getLatestId("taxmaster", "code").then((res) => {
-      this.taxObject.code = 1
+      let code = -1
       if (res.docs.length > 0) {
         res.forEach((doc) => {
           let tempTax = doc.data() as TaxModel
-          this.taxObject.code = tempTax.code + 1
+          code = tempTax.code + 1
         })
+      } else if (res.docs && res.docs.length == 0) {
+        code = 1
       }
-      this.masterService.addTax(this.taxObject)
-        .then(res => {
-          this.taxObject = new TaxModel();
-          this.global.loader = false
-          this.global.showToast("Tax added successfully", "success", false)
-        }).catch(e => {
-          this.global.loader = false
-          this.global.showToast("Error occured" + e.toString(), "error", true);
-        });
+      if (code > -1) {
+        this.taxObject.code = code
+        this.masterService.addTax(this.taxObject)
+          .then(res => {
+            this.taxObject = new TaxModel();
+            this.global.loader = false
+            this.global.showToast("Tax added successfully", "success", false)
+          }).catch(e => {
+            this.global.loader = false
+            this.global.showToast("Error occured" + e.toString(), "error", true);
+          });
+      } else {
+        this.global.showToast("There is no some connectivity issues,Retry again", "error", true)
+      }
     }).catch(e => {
       this.global.loader = false
       this.global.showToast("Error occured" + e.toString(), "error", true);
     });
+
   }
 
   clearItem() {

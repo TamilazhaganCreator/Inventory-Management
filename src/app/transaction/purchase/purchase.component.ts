@@ -549,35 +549,42 @@ export class PurchaseComponent implements OnInit {
   submitToServer() {
     this.global.loader = true
     this.global.getLatestId("purchaseHeader", "id").then((res) => {
-      this.purchaseHeader.id = 1
+      let id = -1
       if (res.docs.length > 0) {
         res.forEach((doc) => {
-          let tempPur = doc.data() as PurchaseHeaderModel
-          this.purchaseHeader.id = tempPur.id + 1
+          let p = doc.data() as PurchaseHeaderModel
+          id = p.id + 1
         })
+      } else if (res.docs && res.docs.length == 0) {
+        id = 1
       }
-      this.service.addPurchaseHeader(this.purchaseHeader)
-        .then(res => {
-          this.service.addPurchaseDetail(this.purchaseDetails, this.purchaseHeader.id.toString())
-            .then(res => {
-              this.service.updateItemDetails(this.getItemArray(true))
-                .then(res => {
-                  let amount = this.roundOff(this.getsupplierAmt())
-                  this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
-                    .then(res => {
-                      this.printBill(true);
-                    }).catch(e => {
-                      this.global.showToast("Error occured" + e, "error", true)
-                    })
-                }).catch(e => {
-                  this.global.showToast("Error occured" + e, "error", true)
-                })
-            }).catch(e => {
-              this.global.showToast("Error occured" + e, "error", true)
-            })
-        }).catch(e => {
-          this.global.showToast("Error occured" + e, "error", true)
-        })
+      if (id > -1) {
+        this.purchaseHeader.id = id
+        this.service.addPurchaseHeader(this.purchaseHeader)
+          .then(res => {
+            this.service.addPurchaseDetail(this.purchaseDetails, this.purchaseHeader.id.toString())
+              .then(res => {
+                this.service.updateItemDetails(this.getItemArray(true))
+                  .then(res => {
+                    let amount = this.roundOff(this.getsupplierAmt())
+                    this.service.updateCustomerAmount("suppliermaster", this.purchaseHeader.supplierCode.toString(), amount)
+                      .then(res => {
+                        this.printBill(true);
+                      }).catch(e => {
+                        this.global.showToast("Error occured" + e, "error", true)
+                      })
+                  }).catch(e => {
+                    this.global.showToast("Error occured" + e, "error", true)
+                  })
+              }).catch(e => {
+                this.global.showToast("Error occured" + e, "error", true)
+              })
+          }).catch(e => {
+            this.global.showToast("Error occured" + e, "error", true)
+          })
+      } else {
+        this.global.showToast("There is some connectivity issues, Retry", "error", true)
+      }
     }).catch(e => {
       this.global.showToast("Error occured" + e, "error", true)
     })

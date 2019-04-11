@@ -115,22 +115,29 @@ export class CustomermasterComponent implements OnInit {
   addCustomer() {
     this.global.loader = true
     this.global.getLatestId(this.collectionName, "code").then((res) => {
-      this.customer.code = 1;
+      let code = -1
       if (res.docs.length > 0) {
         res.forEach((doc) => {
-          let tempCust = doc.data() as CustomerModel
-          this.customer.code = tempCust.code + 1
+          let cust = doc.data() as CustomerModel
+          code = cust.code + 1
         })
+      } else if (res.docs && res.docs.length == 0) {
+        code = 1
       }
-      this.service.addCustomer(this.collectionName, this.customer)
-        .then(res => {
-          this.customer = new CustomerModel();
-          this.global.loader = false
-          this.global.showToast(this.masterName + " added successfully", "success", false)
-        }).catch(e => {
-          this.global.loader = false
-          this.global.showToast("Error occured " + e, "error", true)
-        })
+      if (code > -1) {
+        this.customer.code = code
+        this.service.addCustomer(this.collectionName, this.customer)
+          .then(res => {
+            this.customer = new CustomerModel();
+            this.global.loader = false
+            this.global.showToast(this.masterName + " added successfully", "success", false)
+          }).catch(e => {
+            this.global.loader = false
+            this.global.showToast("Error occured " + e, "error", true)
+          })
+      } else {
+        this.global.showToast("There is some connectivity issues, Retry", "error", true)
+      }
     }).catch(e => {
       this.global.loader = false
       this.global.showToast("Error occured " + e, "error", true)
