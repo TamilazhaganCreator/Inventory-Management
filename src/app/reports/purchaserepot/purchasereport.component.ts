@@ -24,6 +24,7 @@ export class PurchaseReportComponent implements OnInit {
   filter = new FilterModel()
   paidAmt = 0
   netAmt = 0
+  taxAmt = 0
   datePickerParams = [
     {
       format: "dd/mm/yyyy",
@@ -73,6 +74,11 @@ export class PurchaseReportComponent implements OnInit {
         data: 'netAmt',
         type: 'numeric',
         readOnly: true,
+      },
+      {
+        data: 'taxAmt',
+        type: 'numeric',
+        readOnly: true,
       }
     ],
     rowHeaders: true,
@@ -83,7 +89,8 @@ export class PurchaseReportComponent implements OnInit {
       'DATE',
       'PAYMENT TYPE',
       'PAID AMOUNT',
-      'NET AMOUNT'
+      'TOTAL AMOUNT',
+      'TAX AMOUNT'
     ],
     filters: true,
     height: 440,
@@ -127,7 +134,9 @@ export class PurchaseReportComponent implements OnInit {
     this.backupPurchaseHeader = []
     this.service.getFullData("purchaseHeader", "timestamp").then((res) => {
       res.forEach((doc) => {
-        this.purchaseHeader[index] = doc.data() as PurchaseTransactionReportModel
+        let element = doc.data() as PurchaseTransactionReportModel
+        element.netAmt = this.roundOff(element.netAmt - element.taxAmt) 
+        this.purchaseHeader[index] = element 
         index++;
       })
       this.purchaseHeader.forEach((element) => {
@@ -148,7 +157,8 @@ export class PurchaseReportComponent implements OnInit {
 
   setTotalAmt() {
     this.paidAmt = this.purchaseHeader.map(s => s.paidAmt).reduce((a, b) => a + b, 0)
-    this.netAmt = this.purchaseHeader.map(s => s.netAmt).reduce((a, b) => a + b, 0)
+    this.netAmt = this.roundOff(this.purchaseHeader.map(s => s.netAmt).reduce((a, b) => a + b, 0))
+    this.taxAmt = this.roundOff(this.purchaseHeader.map(s => s.taxAmt).reduce((a, b) => a + b, 0))
   }
 
   removeValue(event) {
@@ -215,4 +225,9 @@ export class PurchaseReportComponent implements OnInit {
         s.unsubscribe()
     })
   }
+
+  roundOff(value): number {
+    return Math.round(value * Math.pow(10, 2)) / (Math.pow(10, 2));
+  }
+
 }
