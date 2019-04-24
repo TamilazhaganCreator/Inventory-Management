@@ -18,7 +18,7 @@ export class SalesHeaderModel {
     customerValid = false
     otherCharges: number = 0;
     timestamp: number;
-    paidAmt: number =null;
+    paidAmt: number = null;
     invoiceDateString: String;
 }
 
@@ -31,7 +31,8 @@ export class TransactionReportModel {
     paymentType: number;
     netAmt: number;
     timestamp: number;
-    paidAmt: number =null;
+    paidAmt: number = null;
+    taxAmt: number;
     invoiceDateString: String;
     paymentTypeString: String;
 }
@@ -44,8 +45,9 @@ export class PurchaseTransactionReportModel {
     invoiceNo: string;
     paymentType: number;
     netAmt: number;
+    taxAmt: number;
     timestamp: number;
-    paidAmt: number =null;
+    paidAmt: number = null;
     invoiceDateString: String;
     paymentTypeString: String;
 }
@@ -71,8 +73,8 @@ export class SalesDetailModel {
     igst_perc: number;
     taxPercentage: number;
     stockValue: number;
-    sales:number;
-    purchase:number;
+    sales: number;
+    purchase: number;
 }
 
 export class PurchaseHeaderModel {
@@ -95,7 +97,7 @@ export class PurchaseHeaderModel {
     supplierValid = false
     timestamp: number;
     otherCharges: number = 0;
-    paidAmt: number =null;
+    paidAmt: number = null;
 }
 
 export class PurchaseDetailModel {
@@ -118,6 +120,6 @@ export class PurchaseDetailModel {
     igst_perc: number;
     taxPercentage: number;
     stockValue: number;
-    sales:number;
-    purchase:number;
+    sales: number;
+    purchase: number;
 }
