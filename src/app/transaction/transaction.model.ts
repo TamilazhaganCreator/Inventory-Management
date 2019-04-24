@@ -32,6 +32,7 @@ export class TransactionReportModel {
     netAmt: number;
     timestamp: number;
     paidAmt: number = null;
+    taxAmt: number;
     invoiceDateString: String;
     paymentTypeString: String;
 }
@@ -44,6 +45,7 @@ export class PurchaseTransactionReportModel {
     invoiceNo: string;
     paymentType: number;
     netAmt: number;
+    taxAmt: number;
     timestamp: number;
     paidAmt: number = null;
     invoiceDateString: String;

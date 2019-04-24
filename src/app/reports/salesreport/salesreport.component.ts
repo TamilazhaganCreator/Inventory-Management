@@ -1,14 +1,14 @@
-import { Subscription } from 'rxjs';
-import { CustomerModel } from './../../master/master.model';
-import { GenericLovService } from 'src/app/genericlov/genericlov.service';
-import { TransactionReportModel } from './../../transaction/transaction.model';
-import { GlobalService } from 'src/app/global.service';
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { ReportService } from '../report.service';
-import { FilterModel } from '../report.model';
-import { HotTableRegisterer } from '@handsontable/angular';
-import { CollapsibleMaterializeAction } from 'src/app/global.model';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HotTableRegisterer } from '@handsontable/angular';
+import { Subscription } from 'rxjs';
+import { GenericLovService } from 'src/app/genericlov/genericlov.service';
+import { CollapsibleMaterializeAction } from 'src/app/global.model';
+import { GlobalService } from 'src/app/global.service';
+import { FilterModel } from '../report.model';
+import { ReportService } from '../report.service';
+import { CustomerModel } from './../../master/master.model';
+import { TransactionReportModel } from './../../transaction/transaction.model';
 
 @Component({
   selector: 'app-salesreport',
@@ -24,6 +24,7 @@ export class SalesReportComponent implements OnInit {
   filter = new FilterModel()
   paidAmt = 0
   netAmt = 0
+  taxAmt = 0
   datePickerParams = [
     {
       format: "dd/mm/yyyy",
@@ -72,6 +73,11 @@ export class SalesReportComponent implements OnInit {
       {
         data: 'netAmt',
         type: 'numeric',
+        readOnly: true
+      },
+      {
+        data: 'taxAmt',
+        type: 'numeric',
         readOnly: true,
       }
     ],
@@ -83,7 +89,8 @@ export class SalesReportComponent implements OnInit {
       'DATE',
       'PAYMENT TYPE',
       'PAID AMOUNT',
-      'NET AMOUNT'
+      'TOTAL AMOUNT',
+      'TAX AMOUNT'
     ],
     filters: true,
     height: 440,
@@ -117,8 +124,8 @@ export class SalesReportComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.global.loader = true;
-    this.getSales()
-    },100);
+      this.getSales()
+    }, 100);
   }
 
   private getSales() {
@@ -127,7 +134,9 @@ export class SalesReportComponent implements OnInit {
     this.backupSalesHeader = []
     this.service.getFullData("salesheader", "timestamp").then((res) => {
       res.forEach((doc) => {
-        this.salesHeader[index] = doc.data() as TransactionReportModel
+        let element = doc.data() as TransactionReportModel
+        element.netAmt = this.roundOff(element.netAmt - element.taxAmt) 
+        this.salesHeader[index] = element
         index++;
       })
       this.salesHeader.forEach((element) => {
@@ -206,7 +215,8 @@ export class SalesReportComponent implements OnInit {
 
   setTotalAmt() {
     this.paidAmt = this.salesHeader.map(s => s.paidAmt).reduce((a, b) => a + b, 0)
-    this.netAmt = this.salesHeader.map(s => s.netAmt).reduce((a, b) => a + b, 0)
+    this.netAmt = this.roundOff(this.salesHeader.map(s => s.netAmt).reduce((a, b) => a + b, 0))
+    this.taxAmt = this.roundOff(this.salesHeader.map(s => s.taxAmt).reduce((a, b) => a + b, 0))
   }
 
   ngOnDestroy(): void {
@@ -215,4 +225,9 @@ export class SalesReportComponent implements OnInit {
         s.unsubscribe()
     })
   }
+
+  roundOff(value): number {
+    return Math.round(value * Math.pow(10, 2)) / (Math.pow(10, 2));
+  }
+
 }
