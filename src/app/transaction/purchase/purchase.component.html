@@ -337,6 +337,7 @@
       <div class="col s1 bill-dtl">
         <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
           {{_index + 1}}
+          <br><span style="visibility: hidden">()</span>
         </div>
       </div>
       <div class="col s5 left-align bill-dtl left-bdr">
@@ -349,22 +350,26 @@
       <div class="col s2 bill-dtl left-bdr">
         <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
           {{item.hsncode}}
+          <br><span style="visibility: hidden">()</span>
         </div>
       </div>
       <div class="col s4 nopad">
         <div class="col s3 bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;">
             {{item.totalUnit}}
+            <br><span style="visibility: hidden">()</span>
           </div>
         </div>
         <div class="col s3 bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
             {{item.sp}}
+            <br><span style="visibility: hidden">()</span>
           </div>
         </div>
         <div class="col s6 right-align bill-dtl left-bdr">
           <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
             {{roundOff(item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt)}}
+            <br><span style="visibility: hidden">()</span>
           </div>
         </div>
       </div>

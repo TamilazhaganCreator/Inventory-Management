@@ -294,7 +294,7 @@ export class PurchaseComponent implements OnInit {
 
   checkField(index: number, event, format: string, field: string) {
     if (this.global[format].test(event.target.value)) {
-      if (event.target.value != '')
+      if (event.target.value != '' && event.target.value != '.')
         this.purchaseDetails[index][field] = +(event.target.value)
       else
         this.purchaseDetails[index][field] = null
@@ -707,20 +707,20 @@ export class PurchaseComponent implements OnInit {
   }
 
   private getCgstAmt(): number {
-    return this.purchaseDetails.filter(d => d.itemName).map(d => d.cgstAmt).reduce((a, b) => a + b, 0)
+    return this.roundOff(this.purchaseDetails.filter(d => d.itemName).map(d => d.cgstAmt).reduce((a, b) => a + b, 0))
   }
 
 
   private getSgstAmt(): number {
-    return this.purchaseDetails.filter(d => d.itemName).map(d => d.sgstAmt).reduce((a, b) => a + b, 0)
+    return this.roundOff(this.purchaseDetails.filter(d => d.itemName).map(d => d.sgstAmt).reduce((a, b) => a + b, 0))
   }
 
   private getIgstAmt(): number {
-    return this.purchaseDetails.filter(d => d.itemName).map(d => d.igstAmt).reduce((a, b) => a + b, 0)
+    return this.roundOff(this.purchaseDetails.filter(d => d.itemName).map(d => d.igstAmt).reduce((a, b) => a + b, 0))
   }
 
   private getCessAmt(): number {
-    return this.purchaseDetails.filter(d => d.itemName).map(d => d.cessAmt).reduce((a, b) => a + b, 0)
+    return this.roundOff(this.purchaseDetails.filter(d => d.itemName).map(d => d.cessAmt).reduce((a, b) => a + b, 0))
   }
 }
 
