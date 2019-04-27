@@ -375,7 +375,7 @@ export class SalestransactionComponent implements OnInit {
     if (this.tenNumberWithTwoDigitsFormatRegex.test(event.target.value)) {
       if (fieldName == 'otherCharges' && this.salesHeader.otherCharges) {
         if (this.salesHeader.netAmt != null) {
-          this.salesHeader.netAmt = this.salesHeader.netAmt - this.salesHeader.otherCharges
+          this.salesHeader.netAmt = this.roundOff(this.salesHeader.netAmt - this.salesHeader.otherCharges)
         }
       }
       if (event.target.value != '' && event.target.value != '.') {

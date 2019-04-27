@@ -135,7 +135,7 @@ export class PurchaseReportComponent implements OnInit {
     this.service.getFullData("purchaseHeader", "timestamp").then((res) => {
       res.forEach((doc) => {
         let element = doc.data() as PurchaseTransactionReportModel
-        element.netAmt = this.roundOff(element.netAmt - element.taxAmt) 
+        element.netAmt = this.roundOff(element.netAmt - element.taxAmt - element.otherCharges) 
         this.purchaseHeader[index] = element 
         index++;
       })
@@ -196,11 +196,11 @@ export class PurchaseReportComponent implements OnInit {
     }
     if (this.filter.customerCode) {
       filtered = true
-      this.purchaseHeader = this.backupPurchaseHeader.filter(s => s.supplierCode == this.filter.customerCode)
+      this.purchaseHeader = this.purchaseHeader.filter(s => s.supplierCode == this.filter.customerCode)
     }
     if (this.filter.paymentType) {
       filtered = true
-      this.purchaseHeader = this.backupPurchaseHeader.filter(s => s.paymentTypeString == this.filter.paymentType)
+      this.purchaseHeader = this.purchaseHeader.filter(s => s.paymentTypeString == this.filter.paymentType)
     }
     this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
     if (filtered) {
