@@ -129,7 +129,7 @@ export class PurchaseComponent implements OnInit {
         if (id) {
           this.service.getHeaderDetails("purchaseHeader", id)
             .subscribe((res) => {
-              this.global.routeLoader = true
+              this.global.loader = true
               let temHeader = res.data() as PurchaseHeaderModel
               this.masterService.getItem("suppliermaster", temHeader.supplierCode.toString())
                 .subscribe((sup) => {
@@ -146,7 +146,7 @@ export class PurchaseComponent implements OnInit {
                       })
                       temHeader.invoiceDate = new Date(temHeader.timestamp)
                       this.purchaseHeader = temHeader
-                      this.global.routeLoader = false
+                      this.global.loader = false
                       this.global.showToast("Purchase details for that row - [ READ ONLY MODE ]", "success", true)
                     }, error => {
                       this.global.showToast("Error occurred" + error, "error", true)
@@ -404,12 +404,12 @@ export class PurchaseComponent implements OnInit {
   checkNumberValue(event, fieldName) {
     if (this.tenNumberWithTwoDigitsFormatRegex.test(event.target.value)) {
       if (fieldName == 'otherCharges' && this.purchaseHeader.otherCharges) {
-        this.purchaseHeader.netAmt = this.purchaseHeader.netAmt - this.purchaseHeader.otherCharges
+        this.purchaseHeader.netAmt = this.roundOff(this.purchaseHeader.netAmt - this.purchaseHeader.otherCharges)
       }
       if (event.target.value != '' && event.target.value != '.') {
         this.purchaseHeader[fieldName] = +(event.target.value)
         if (fieldName == 'otherCharges' && this.purchaseHeader.otherCharges) {
-          this.purchaseHeader.netAmt = this.purchaseHeader.netAmt + this.purchaseHeader.otherCharges
+          this.purchaseHeader.netAmt = this.roundOff(this.purchaseHeader.netAmt + this.purchaseHeader.otherCharges)
         }
       } else {
         this.purchaseHeader[fieldName] = null
