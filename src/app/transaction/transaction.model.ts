@@ -35,6 +35,7 @@ export class TransactionReportModel {
     taxAmt: number;
     invoiceDateString: String;
     paymentTypeString: String;
+    otherCharges: number = 0;
 }
 
 export class PurchaseTransactionReportModel {
@@ -50,6 +51,7 @@ export class PurchaseTransactionReportModel {
     paidAmt: number = null;
     invoiceDateString: String;
     paymentTypeString: String;
+    otherCharges: number = 0;
 }
 
 
