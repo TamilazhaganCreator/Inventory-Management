@@ -367,7 +367,7 @@ export class SalestransactionComponent implements OnInit {
 
   openSubmitModal() {
     if (this.confimationModalHeader == 'Submit' || this.confimationModalHeader == 'Print') {
-      if (window.location.href.includes('localhost')) {
+      if (window.location.href.includes('shawithout')) {
         this.without = true
       } else {
         this.without = false
