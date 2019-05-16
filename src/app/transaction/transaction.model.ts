@@ -125,3 +125,17 @@ export class PurchaseDetailModel {
     sales: number;
     purchase: number;
 }
+
+export class CashPaymentModel {
+    id: number = null;
+    personType: string = null;
+    code: number = null;
+    name: String = null;
+    date: Date = null;
+    timestamp: number = null;
+    paymentType: String = null;
+    note: String = null;
+    amount: number = null;
+    personAmt: number = null;
+    dateString:String = null;
+}
