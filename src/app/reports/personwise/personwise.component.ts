@@ -40,7 +40,7 @@ export class PersonwiseComponent implements OnInit {
   private hotRegisterer = new HotTableRegisterer();
   private transactionDetails = []
   filterCollapsible = new EventEmitter<string | CollapsibleMaterializeAction>();
-  private personType = null;
+  personType = null;
   hotSettings: Handsontable.GridSettings = {
     data: this.transactionDetails,
     columns: [
