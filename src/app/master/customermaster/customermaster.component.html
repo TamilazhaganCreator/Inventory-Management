@@ -56,14 +56,14 @@
         <label for="money" [ngClass]="{'actives': customer.amount != null}">Amount</label>
       </div>
       <div class="input-field col s4">
-        <input id="add" type="text" (input)="checkAmt($event,'moneyReceived')" tabindex="8"
+        <input id="add" type="text" [readOnly]="customer.code" (input)="checkAmt($event,'moneyReceived')" tabindex="8"
           [value]="customer.moneyReceived">
-        <label for="add" [ngClass]="{'actives': customer.moneyReceived}">Money Received </label>
+        <label for="add" [ngClass]="{'actives': customer.moneyReceived}">Add Opening Debit </label>
       </div>
       <div class="input-field col s4">
-        <input id="sub" type="text" tabindex="9" (input)="checkAmt($event,'creditMoney')"
+        <input id="sub" type="text" tabindex="9" [readOnly]="customer.code" (input)="checkAmt($event,'creditMoney')"
           [value]="customer.creditMoney">
-        <label for="sub" [ngClass]="{'actives': customer.creditMoney}">Add Credit Money </label>
+        <label for="sub" [ngClass]="{'actives': customer.creditMoney}">Add Opening Credit</label>
       </div>
     </div>
     <div class="col s8 offset-s2 margin-top-24">
