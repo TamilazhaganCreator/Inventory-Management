@@ -2,7 +2,7 @@ import { CustomerModel } from 'src/app/master/master.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ItemModel } from '../master/master.model';
-import { SalesDetailModel, SalesHeaderModel, PurchaseHeaderModel, PurchaseDetailModel } from './transaction.model';
+import { SalesDetailModel, SalesHeaderModel, PurchaseHeaderModel, PurchaseDetailModel, CashPaymentModel } from './transaction.model';
 
 @Injectable({
   providedIn: 'root'
@@ -175,8 +175,8 @@ export class TransactionService {
         "sgst_perc": item.sgst_perc,
         "igst_perc": item.igst_perc,
         "cess_perc": item.cess_perc,
-        "sales":item.sales,
-        "purchase":item.purchase
+        "sales": item.sales,
+        "purchase": item.purchase
       });
       index++;
     })
@@ -196,5 +196,22 @@ export class TransactionService {
 
   getTransactionDetails(collection, id) {
     return this.db.collection(collection).ref.where("id", "==", +id).get()
+  }
+
+  getAllItems(collection, field) {
+    return this.db.collection(collection).ref.orderBy(field).get()
+  }
+
+  addPayment(collection, value: CashPaymentModel) {
+    return this.db.collection(collection).doc(value.id.toString()).set({
+      id: value.id,
+      code: value.code,
+      name: value.name,
+      date: value.date,
+      timestamp: value.timestamp,
+      paymentType: value.paymentType,
+      note: value.note,
+      amount: value.amount
+    })
   }
 }

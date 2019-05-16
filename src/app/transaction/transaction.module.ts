@@ -8,6 +8,7 @@ import { PurchaseComponent } from './purchase/purchase.component';
 import { SalestransactionComponent } from './salestransaction/salestransaction.component';
 import { TransactionRoutingModule } from './transaction-routing.module';
 import { TransactionService } from './transaction.service';
+import { CashpaymentsComponent } from './cashpayments/cashpayments.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { TransactionService } from './transaction.service';
   declarations: [
     SalestransactionComponent,
     PurchaseComponent,
-    NumberToWordsPipe
+    NumberToWordsPipe,
+    CashpaymentsComponent
   ],
   providers: [
     TransactionService

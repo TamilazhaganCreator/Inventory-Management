@@ -1,3 +1,5 @@
+import { PersonwiseComponent } from './personwise/personwise.component';
+import { PaymentsComponent } from './payments/payments.component';
 import { CustomerreportComponent } from './customerreport/customerreport.component';
 import { ItemreportComponent } from './itemreport/itemreport.component';
 import { PurchaseReportComponent } from './purchaserepot/purchasereport.component';
@@ -13,7 +15,9 @@ const routes: Routes = [
     { path: 'purchase', component: PurchaseReportComponent },
     { path: 'items', component: ItemreportComponent },
     { path: 'customer', component: CustomerreportComponent },
-    { path: 'supplier', component: SupplierreportComponent }
+    { path: 'supplier', component: SupplierreportComponent },
+    { path: 'payments', component: PaymentsComponent },
+    { path: 'person-wise', component: PersonwiseComponent }
 ];
 
 
