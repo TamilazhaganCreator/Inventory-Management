@@ -11,6 +11,8 @@ import { PurchaseReportComponent } from './purchaserepot/purchasereport.componen
 import { ItemreportComponent } from './itemreport/itemreport.component';
 import { CustomerreportComponent } from './customerreport/customerreport.component';
 import { SupplierreportComponent } from './supplierreport/supplierreport.component';
+import { PaymentsComponent } from './payments/payments.component';
+import { PersonwiseComponent } from './personwise/personwise.component';
 
 @NgModule({
   imports: [
@@ -26,7 +28,9 @@ import { SupplierreportComponent } from './supplierreport/supplierreport.compone
     PurchaseReportComponent,
     ItemreportComponent,
     CustomerreportComponent,
-    SupplierreportComponent
+    SupplierreportComponent,
+    PaymentsComponent,
+    PersonwiseComponent
   ],
   providers: [
     ReportService
