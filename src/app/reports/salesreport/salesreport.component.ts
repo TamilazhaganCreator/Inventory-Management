@@ -38,6 +38,11 @@ export class SalesReportComponent implements OnInit {
     data: this.salesHeader,
     columns: [
       {
+        data: 'invoiceDateString',
+        type: 'text',
+        className: "htCenter",
+        readOnly: true
+      }, {
         data: 'invoiceNo',
         type: 'numeric',
         readOnly: true,
@@ -51,12 +56,6 @@ export class SalesReportComponent implements OnInit {
       {
         data: 'customerName',
         type: 'text',
-        readOnly: true
-      },
-      {
-        data: 'invoiceDateString',
-        type: 'text',
-        className: "htCenter",
         readOnly: true
       },
       {
@@ -83,10 +82,10 @@ export class SalesReportComponent implements OnInit {
     ],
     rowHeaders: true,
     colHeaders: [
+      'DATE',
       ' INVOICE NO',
       'CUSTOMER CODE',
       'CUSTOMER NAME',
-      'DATE',
       'PAYMENT TYPE',
       'PAID AMOUNT',
       'TOTAL AMOUNT',

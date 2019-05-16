@@ -15,8 +15,8 @@ export class AppComponent implements OnInit {
   email = ""
   pwd = ""
   masterComponents = ["customer", "item", "supplier", "tax"]
-  transactionComponents = ["sales", "purchase"]
-  reportComponents = ["sales", "purchase", "items", "customer", "supplier"]
+  transactionComponents = ["sales", "purchase", "payments"]
+  reportComponents = ["sales", "purchase", "items", "customer", "supplier", "payments", "person-wise"]
   @ViewChild("routerArea") routerArea: ElementRef;
 
   constructor(public global: GlobalService, private router: Router, private auth: AuthService) {

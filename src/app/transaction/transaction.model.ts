@@ -134,6 +134,19 @@ export class CompanyModel {
     ifsc: string = "";
     bankAddress: string = "";
     email: string = ""
-    mb1: number= 0;
+    mb1: number = 0;
     mb2: number = 0;
+}
+export class CashPaymentModel {
+    id: number = null;
+    personType: string = null;
+    code: number = null;
+    name: String = null;
+    date: Date = null;
+    timestamp: number = null;
+    paymentType: String = null;
+    note: String = null;
+    amount: number = null;
+    personAmt: number = null;
+    dateString: String = null;
 }

@@ -4,6 +4,9 @@ export class FilterModel {
     paymentType: String = "";
     customerCode: number = null;
     customerName: String = "";
+    startTimestamp: number = null;
+    endTimestamp: number = null;
+    personAmount: number = 0;
 }
 
 export class ItemFilterModel {

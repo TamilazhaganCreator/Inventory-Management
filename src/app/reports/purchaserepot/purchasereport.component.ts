@@ -38,6 +38,12 @@ export class PurchaseReportComponent implements OnInit {
     data: this.purchaseHeader,
     columns: [
       {
+        data: 'invoiceDateString',
+        type: 'text',
+        className: "htCenter",
+        readOnly: true
+      },
+      {
         data: 'invoiceNo',
         type: 'numeric',
         readOnly: true,
@@ -51,12 +57,6 @@ export class PurchaseReportComponent implements OnInit {
       {
         data: 'supplierName',
         type: 'text',
-        readOnly: true
-      },
-      {
-        data: 'invoiceDateString',
-        type: 'text',
-        className: "htCenter",
         readOnly: true
       },
       {
@@ -83,10 +83,10 @@ export class PurchaseReportComponent implements OnInit {
     ],
     rowHeaders: true,
     colHeaders: [
+      'DATE',
       ' INVOICE NO',
       'SUPPLIER CODE',
       'SUPPLIER NAME',
-      'DATE',
       'PAYMENT TYPE',
       'PAID AMOUNT',
       'TOTAL AMOUNT',
@@ -124,8 +124,8 @@ export class PurchaseReportComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.global.loader = true;
-    this.getPurchase()
-    },100);
+      this.getPurchase()
+    }, 100);
   }
 
   private getPurchase() {
@@ -135,8 +135,8 @@ export class PurchaseReportComponent implements OnInit {
     this.service.getFullData("purchaseHeader", "timestamp").then((res) => {
       res.forEach((doc) => {
         let element = doc.data() as PurchaseTransactionReportModel
-        element.netAmt = this.roundOff(element.netAmt - element.taxAmt - element.otherCharges) 
-        this.purchaseHeader[index] = element 
+        element.netAmt = this.roundOff(element.netAmt - element.taxAmt - element.otherCharges)
+        this.purchaseHeader[index] = element
         index++;
       })
       this.purchaseHeader.forEach((element) => {
