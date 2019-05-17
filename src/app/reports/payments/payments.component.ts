@@ -83,6 +83,12 @@ export class PaymentsComponent implements OnInit {
       })
   }
 
+  ngOnDestroy(){
+    this.subscriptionArray.forEach(e =>{
+      e.unsubscribe();
+    })
+  }
+
   ngOnInit() {
   }
 

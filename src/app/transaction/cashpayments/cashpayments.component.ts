@@ -15,6 +15,7 @@ export class CashpaymentsComponent implements OnInit {
 
   cashPayment = new CashPaymentModel()
   subscriptions: Subscription[] = []
+  numberwith2DecimalRegex: RegExp = /^\d{0,8}(?:\.\d{0,2})?$/;
 
   constructor(private global: GlobalService, private lovService: GenericLovService,
     private service: TransactionService) {
@@ -54,7 +55,7 @@ export class CashpaymentsComponent implements OnInit {
 
 
   checkNumberValue(event) {
-    if (this.global.numberwith2DecimalRegex.test(event.target.value)) {
+    if (this.numberwith2DecimalRegex.test(event.target.value)) {
       if (event.target.value != '' && event.target.value != '.') {
         this.cashPayment.amount = +(event.target.value)
       } else {
