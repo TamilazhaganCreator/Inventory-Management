@@ -226,5 +226,12 @@ export class PersonwiseComponent implements OnInit {
     this.filter.customerCode = null;
     this.filter.customerName = null;
   }
+
+  ngOnDestroy(){
+    this.subscriptionArray.forEach(e =>{
+      e.unsubscribe();
+    })
+  }
+
 }
 
