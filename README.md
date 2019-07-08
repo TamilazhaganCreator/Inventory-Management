@@ -2,6 +2,21 @@
 
 A web application to automate and digitize a business, right from billing to reports. 
 
+### Modules
+- Supplier Master
+- Item Master
+- Customer Master
+- Tax Master
+- Sales
+- Purchase
+- Reports
+  - Sales
+  - Purchase
+  - Item
+  - Customer 
+  - Sales
+  - Person-wise
+
 ## Tech Stack:
 - Angular-7
 - Firebase(Cloud Firestore as Backend)
