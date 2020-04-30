@@ -27,7 +27,7 @@
     "hammerjs": "^2.0.8",
     "handsontable": "^6.2.2",
     "html2canvas": "^1.0.0-alpha.12",
-    "jquery": "^2.2.4",
+    "jquery": "^3.5.0",
     "jspdf": "^1.5.3",
     "materialize-css": "^0.100.2",
     "node-snackbar": "^0.1.15",
