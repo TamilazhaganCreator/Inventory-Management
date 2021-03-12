@@ -28,7 +28,7 @@
     "handsontable": "^6.2.2",
     "html2canvas": "^1.0.0-alpha.12",
     "jquery": "^2.2.4",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "materialize-css": "^0.100.2",
     "node-snackbar": "^0.1.15",
     "rxjs": "~6.3.3",
